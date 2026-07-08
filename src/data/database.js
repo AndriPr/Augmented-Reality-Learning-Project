@@ -1,8 +1,8 @@
 // Centralized Data Store for AR Models
 export const modelDatabase = {
     'target0': {
-        name: 'Mesin Gearbox',
-        badge: 'PLN Mekanik',
+        name: 'Proyek Pembelajaran Undip',
+        badge: 'UNDIP',
         parts: {
             'Gearbox': {
                 title: 'Gearbox Utama',

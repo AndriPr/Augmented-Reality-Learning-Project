@@ -27,14 +27,27 @@ export class AREngine {
                     <!-- Assets will be injected here -->
                 </a-assets>
 
+                <!-- Pencahayaan Maksimal agar model tidak gelap/hitam -->
+                <a-light type="ambient" color="#FFFFFF" intensity="2.5"></a-light>
+                <a-light type="directional" color="#FFFFFF" intensity="1.5" position="-1 2 1"></a-light>
+
                 <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-                <!-- TARGET 0: Model Gearbox -->
+                <!-- TARGET 0: Model Utama -->
                 <a-entity id="target0" mindar-image-target="targetIndex: 0">
-                    <a-entity 
-                        gltf-model="#model-gearbox" 
-                        position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0" 
-                        class="clickable" clickable-model>
+                    <a-entity position="0 0 0" scale="1 1 1">
+                        <!-- Objek Primitif yang DIJAMIN MUNCUL (Kubus Kuning) -->
+                        <a-box id="part1" color="#FFC000" position="0 0.5 0" scale="0.8 0.8 0.8" opacity="0.8"
+                            animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"
+                            class="clickable" clickable-model>
+                        </a-box>
+                        
+                        <!-- Model GLB Asli (Gearbox/Lainnya) -->
+                        <a-entity 
+                            gltf-model="#model-gearbox" 
+                            position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0" 
+                            class="clickable" clickable-model>
+                        </a-entity>
                     </a-entity>
                 </a-entity>
 
