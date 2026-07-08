@@ -72,12 +72,26 @@ export class UIController {
             });
         }
         
-        document.getElementById('btn-download-marker').addEventListener('click', () => {
-            this.modalMarker.classList.remove('hidden');
-        });
-        document.getElementById('btn-close-modal').addEventListener('click', () => {
-            this.modalMarker.classList.add('hidden');
-        });
+        const btnToggleUI = document.getElementById('btn-toggle-ui');
+        if (btnToggleUI) {
+            btnToggleUI.addEventListener('click', () => {
+                const actionBar = document.getElementById('action-bar');
+                // Header is already partially visible, let's toggle visibility of action bar
+                if (actionBar) {
+                    actionBar.classList.toggle('hidden');
+                }
+                
+                // Toggle opacity of header to make it semi-transparent or hidden
+                const header = document.querySelector('.glass-header');
+                if (header) {
+                    if (header.style.opacity === '0.2') {
+                        header.style.opacity = '1';
+                    } else {
+                        header.style.opacity = '0.2'; // Make it very transparent but still clickable to bring it back
+                    }
+                }
+            });
+        }
         
         const btnResetView = document.getElementById('btn-reset-view');
         if (btnResetView) {

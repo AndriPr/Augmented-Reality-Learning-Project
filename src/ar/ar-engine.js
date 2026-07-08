@@ -233,7 +233,7 @@ export class AREngine {
                         modelContainer.object3D.visible = true;
                         // Isometric Showcase (Lego-style)
                         modelContainer.setAttribute('position', '0 0 -20');
-                        modelContainer.setAttribute('scale', '0.1 0.1 0.1'); 
+                        modelContainer.setAttribute('scale', '0.05 0.05 0.05'); // Ukuran proporsional persis AR
                         modelContainer.setAttribute('rotation', '15 -30 0');
                     } else {
                         // Mode AR
@@ -323,7 +323,7 @@ export class AREngine {
                 window.addEventListener('resetView', () => {
                     if (window.is2DModeLocal) {
                         this.el.setAttribute('position', '0 0 -20');
-                        this.el.setAttribute('scale', '0.1 0.1 0.1');
+                        this.el.setAttribute('scale', '0.05 0.05 0.05');
                         this.el.setAttribute('rotation', '15 -30 0');
                     } else {
                         this.el.setAttribute('position', '0 0 0');
@@ -333,6 +333,7 @@ export class AREngine {
                 });
 
                 sceneEl.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Cegah browser panning
                     if (e.touches.length === 2) {
                         // Setup Pinch & Twist & Pan
                         const dx = e.touches[0].pageX - e.touches[1].pageX;
@@ -353,6 +354,7 @@ export class AREngine {
                 });
 
                 sceneEl.addEventListener('touchmove', (e) => {
+                    e.preventDefault(); // Cegah browser panning
                     if (e.touches.length === 2) {
                         // Pinch to Zoom
                         const dx = e.touches[0].pageX - e.touches[1].pageX;
