@@ -46,7 +46,8 @@
                 <span id="status-text">Mencari Marker...</span>
             </div>
             <div class="header-actions">
-                <button id="btn-toggle-mode" class="btn-glass active">Mode: AR</button>
+                <button id="btn-download-2d" class="btn-glass">Unduh Mode 2D</button>
+                <button id="btn-toggle-mode" class="btn-glass active hidden">Beralih ke 2D</button>
                 <button id="btn-download-marker" class="btn-glass">Marker</button>
             </div>
         </header>
@@ -86,6 +87,18 @@
                 <a href="https://raw.githubusercontent.com/AndriPr/Augmented-Reality-Learning-Project/main/public/assets/targets/marker_trafo.png" target="_blank" class="btn-primary">Marker Trafo</a>
             </div>
             <button id="btn-close-modal" class="btn-outline">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Download 2D Modal -->
+    <div id="modal-download-2d" class="modal hidden">
+        <div class="modal-box glass-panel">
+            <h3>Mengunduh Mode 2D</h3>
+            <p>Mengekstrak aset 3D untuk lingkungan virtual...</p>
+            <div class="progress-bar-container" style="margin: 20px 0;">
+                <div id="progress-bar-2d" class="progress-bar" style="width: 0%;"></div>
+            </div>
+            <p id="download-2d-text" class="loading-text-small" style="text-align: center;">0%</p>
         </div>
     </div>
 

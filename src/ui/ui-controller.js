@@ -35,24 +35,60 @@ export class UIController {
             window.open('/assets/targets/card.png', '_blank');
         });
 
-        if (this.btnToggleMode) {
-            this.btnToggleMode.addEventListener('click', () => {
-                this.is2DMode = !this.is2DMode;
-                
-                // Update Button UI
-                this.btnToggleMode.textContent = this.is2DMode ? 'Mode: 2D' : 'Mode: AR';
-                
-                // Update Virtual BG
-                if (this.is2DMode) {
-                    this.virtualBg.classList.remove('hidden');
-                } else {
-                    this.virtualBg.classList.add('hidden');
-                }
+        this.btnDownload2D = document.getElementById('btn-download-2d');
 
-                // Beritahu sistem AR untuk beralih mode
-                window.dispatchEvent(new CustomEvent('toggleARMode', { detail: this.is2DMode }));
+        if (this.btnDownload2D) {
+            this.btnDownload2D.addEventListener('click', () => {
+                const modal2D = document.getElementById('modal-download-2d');
+                const progress2D = document.getElementById('progress-bar-2d');
+                const text2D = document.getElementById('download-2d-text');
+                modal2D.classList.remove('hidden');
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.floor(Math.random() * 20) + 10; // Cepat
+                    if (progress > 100) progress = 100;
+                    progress2D.style.width = progress + '%';
+                    text2D.textContent = progress + '%';
+                    
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            modal2D.classList.add('hidden');
+                            this.btnDownload2D.classList.add('hidden'); // Sembunyikan tombol unduh
+                            this.btnToggleMode.classList.remove('hidden'); // Munculkan tombol beralih mode
+                            
+                            // Langsung alihkan ke mode 2D
+                            this.toggleARMode(true);
+                        }, 500);
+                    }
+                }, 300);
             });
         }
+
+        if (this.btnToggleMode) {
+            this.btnToggleMode.addEventListener('click', () => {
+                this.toggleARMode(!this.is2DMode);
+            });
+        }
+    }
+
+    toggleARMode(is2D) {
+        this.is2DMode = is2D;
+        
+        // Update Button UI
+        this.btnToggleMode.textContent = this.is2DMode ? 'Beralih ke AR' : 'Beralih ke 2D';
+        
+        // Update Virtual BG
+        if (this.is2DMode) {
+            this.virtualBg.classList.remove('hidden');
+        } else {
+            this.virtualBg.classList.add('hidden');
+        }
+
+        // Beritahu sistem AR untuk beralih mode
+        window.dispatchEvent(new CustomEvent('toggleARMode', { detail: this.is2DMode }));
+    }
         
         document.getElementById('btn-download-marker').addEventListener('click', () => {
             this.modalMarker.classList.remove('hidden');
