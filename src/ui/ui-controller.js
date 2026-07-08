@@ -17,7 +17,6 @@ export class UIController {
         this.infoFunction = document.getElementById('info-function');
         this.infoDesc = document.getElementById('info-desc');
         this.buttonsContainer = document.getElementById('buttons-container');
-        this.btnDownload = document.getElementById('btn-download-marker');
         this.btnToggleMode = document.getElementById('btn-toggle-mode');
         this.virtualBg = document.getElementById('virtual-bg');
 
@@ -31,10 +30,7 @@ export class UIController {
 
     initEvents() {
         // Binding Actions
-        this.btnDownload.addEventListener('click', () => {
-            window.open('/assets/targets/card.png', '_blank');
-        });
-
+        
         this.btnDownload2D = document.getElementById('btn-download-2d');
 
         if (this.btnDownload2D) {
