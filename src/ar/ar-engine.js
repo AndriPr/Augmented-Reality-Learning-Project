@@ -231,11 +231,10 @@ export class AREngine {
                         // Pindahkan ke kamera agar mengikuti layar
                         camera.object3D.add(modelContainer.object3D); 
                         modelContainer.object3D.visible = true;
-                        
-                        // Isometric Showcase (Lego-style) dan jauhi kamera (Z=-15) agar tidak nembus tembok
-                        modelContainer.setAttribute('position', '0 -2 -15');
-                        modelContainer.setAttribute('scale', '0.12 0.12 0.12'); // Diperkecil agar seluruhnya muat di layar
-                        modelContainer.setAttribute('rotation', '25 -45 0');
+                        // Isometric Showcase (Lego-style)
+                        modelContainer.setAttribute('position', '0 0 -20');
+                        modelContainer.setAttribute('scale', '0.1 0.1 0.1'); 
+                        modelContainer.setAttribute('rotation', '15 -30 0');
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
@@ -323,9 +322,9 @@ export class AREngine {
                 // Listener untuk Reset View
                 window.addEventListener('resetView', () => {
                     if (window.is2DModeLocal) {
-                        this.el.setAttribute('position', '0 -2 -15');
-                        this.el.setAttribute('scale', '0.12 0.12 0.12');
-                        this.el.setAttribute('rotation', '25 -45 0');
+                        this.el.setAttribute('position', '0 0 -20');
+                        this.el.setAttribute('scale', '0.1 0.1 0.1');
+                        this.el.setAttribute('rotation', '15 -30 0');
                     } else {
                         this.el.setAttribute('position', '0 0 0');
                         this.el.setAttribute('scale', '0.05 0.05 0.05');
@@ -376,23 +375,6 @@ export class AREngine {
                             y: currentRot.y,
                             z: this.initialZRot + angleDiff
                         });
-                        
-                        // Pan (Geser 2 Jari)
-                        const currentPanX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
-                        const currentPanY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
-                        if (this.previousPan) {
-                            const panDeltaX = currentPanX - this.previousPan.x;
-                            const panDeltaY = currentPanY - this.previousPan.y;
-                            
-                            const currentPos = this.el.getAttribute('position');
-                            const panSensitivity = window.is2DModeLocal ? 0.02 : 0.005; // 2D mode butuh sensitivitas lebih tinggi karena jarak kamera jauh
-                            this.el.setAttribute('position', {
-                                x: currentPos.x + panDeltaX * panSensitivity,
-                                y: currentPos.y - panDeltaY * panSensitivity, // Y dibalik karena screen Y dari atas ke bawah
-                                z: currentPos.z
-                            });
-                        }
-                        this.previousPan = { x: currentPanX, y: currentPanY };
                         
                     } else if (e.touches.length === 1 && this.previousTouch) {
                         // Drag to Rotate X & Y (Kembali ke arah putaran awal yang terasa lebih pas)
