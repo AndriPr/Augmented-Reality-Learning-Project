@@ -80,21 +80,6 @@ export class UIController {
             });
         }
         
-        const btnToggleUI = document.getElementById('btn-toggle-ui');
-        if (btnToggleUI) {
-            btnToggleUI.addEventListener('click', () => {
-                const actionBar = document.getElementById('action-bar');
-                // Header is already partially visible, let's toggle visibility of action bar
-                if (actionBar) {
-                    actionBar.classList.toggle('hidden');
-                }
-                
-                // Toggle opacity of header to make it semi-transparent or hidden
-                const header = document.querySelector('.glass-header');
-                if (header) {
-                    if (header.style.opacity === '0.2') {
-                        header.style.opacity = '1';
-                    } else {
                         header.style.opacity = '0.2'; // Make it very transparent but still clickable to bring it back
                     }
                 }
@@ -316,7 +301,7 @@ export class UIController {
             // Pindahkan reset btn ke paling bawah
             this.infoPanel.appendChild(resetBtn);
         }
-
+        this.infoPanel.classList.remove('hidden');
         this.infoPanel.classList.add('visible');
 
         // Highlight active button (if exists)
