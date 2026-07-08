@@ -144,6 +144,18 @@ export class AREngine {
                                 node.material = node.userData.originalMaterial;
                                 node.userData.originalMaterial = null;
                             }
+                            
+                            // Animasi kembali ke posisi semula
+                            if (node.isMesh && node.userData.originalPosition) {
+                                AFRAME.ANIME({
+                                    targets: node.position,
+                                    x: node.userData.originalPosition.x,
+                                    y: node.userData.originalPosition.y,
+                                    z: node.userData.originalPosition.z,
+                                    duration: 800,
+                                    easing: 'easeOutElastic(1, .8)'
+                                });
+                            }
                         });
                     }
                     
@@ -157,20 +169,66 @@ export class AREngine {
 
                 // Listener ketika tombol di Action Bar UI diklik
                 window.addEventListener('isolatePart', (e) => {
-                    const partKey = e.detail; // e.g., 'ban-depan'
+                    const partKey = e.detail; // e.g., 'ban', 'casis', 'mesin'
                     
-                    // Ghosting seluruh GLTF model
                     const parentMesh = this.el.getObject3D('mesh');
                     if (parentMesh) {
                         parentMesh.traverse((node) => {
                             if (node.isMesh) {
+                                // Simpan state original
                                 if (!node.userData.originalMaterial) {
                                     node.userData.originalMaterial = node.material;
                                     node.material = node.material.clone();
                                 }
-                                node.material.transparent = true;
-                                node.material.opacity = 0.15;
-                                node.material.emissive = new THREE.Color(0x000000); 
+                                if (!node.userData.originalPosition) {
+                                    node.userData.originalPosition = node.position.clone();
+                                }
+                                
+                                // Deteksi posisi spasial komponen (karena nama mesh generik)
+                                const box = new THREE.Box3().setFromObject(node);
+                                const worldCenter = new THREE.Vector3();
+                                box.getCenter(worldCenter);
+                                const localCenter = parentMesh.worldToLocal(worldCenter.clone());
+                                
+                                // Klasifikasi heuristik sederhana
+                                let meshPart = 'casis';
+                                if (localCenter.y < 12 && Math.abs(localCenter.x) > 8) meshPart = 'ban';
+                                else if (localCenter.z < -8 && localCenter.y < 20) meshPart = 'mesin';
+
+                                if (meshPart === partKey) {
+                                    // Ini part yang dipilih! Biarkan solid dan kembali ke posisinya.
+                                    node.material.transparent = false;
+                                    node.material.opacity = 1;
+                                    node.material.emissive = new THREE.Color(0x333333); 
+                                    
+                                    AFRAME.ANIME({
+                                        targets: node.position,
+                                        x: node.userData.originalPosition.x,
+                                        y: node.userData.originalPosition.y,
+                                        z: node.userData.originalPosition.z,
+                                        duration: 800,
+                                        easing: 'easeOutElastic(1, .8)'
+                                    });
+                                } else {
+                                    // Ini part lain! Bikin transparan dan EXPLODE (Bongkar spt Lego)
+                                    node.material.transparent = true;
+                                    node.material.opacity = 0.2;
+                                    node.material.emissive = new THREE.Color(0x000000); 
+                                    
+                                    // Hitung arah ledakan menjauh dari pusat
+                                    const dir = new THREE.Vector3().copy(localCenter).normalize();
+                                    const explodeDist = 25; // Jarak bongkar
+                                    const targetPos = node.userData.originalPosition.clone().add(dir.multiplyScalar(explodeDist));
+                                    
+                                    AFRAME.ANIME({
+                                        targets: node.position,
+                                        x: targetPos.x,
+                                        y: targetPos.y,
+                                        z: targetPos.z,
+                                        duration: 800,
+                                        easing: 'easeOutExpo'
+                                    });
+                                }
                             }
                         });
                     }
@@ -180,7 +238,6 @@ export class AREngine {
                     hotspots.forEach(h => {
                         if (h.getAttribute('id') === partKey) {
                             h.setAttribute('visible', 'true');
-                            // Bikin glow lebih besar untuk menunjukkan ini yang sedang diisolasi
                             h.setAttribute('animation', 'property: scale; to: 3 3 3; dir: alternate; loop: true; dur: 500');
                         } else {
                             h.setAttribute('visible', 'false');
