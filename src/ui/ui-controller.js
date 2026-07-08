@@ -95,6 +95,13 @@ export class UIController {
                 window.dispatchEvent(new Event('resetView'));
             });
         }
+        
+        const btnStartApp = document.getElementById('btn-start-app');
+        if (btnStartApp) {
+            btnStartApp.addEventListener('click', () => {
+                document.getElementById('onboarding-overlay').style.display = 'none';
+            });
+        }
     }
 
     toggleARMode(is2D) {
@@ -123,6 +130,7 @@ export class UIController {
                 this.loadingScreen.style.opacity = '0';
                 setTimeout(() => {
                     this.loadingScreen.classList.add('hidden');
+                    // Onboarding will be visible by default since it's not hidden
                     this.uiLayer.classList.remove('hidden');
                 }, 500);
             }, 500);

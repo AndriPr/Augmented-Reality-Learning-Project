@@ -46,6 +46,9 @@ export class AREngine {
                             position="0 0 0" rotation="0 0 0" 
                             class="clickable" clickable-model>
                         </a-entity>
+                        
+                        <!-- Drop Shadow Fake untuk 2D Showcase -->
+                        <a-circle id="drop-shadow" rotation="-90 0 0" position="0 -3 0" radius="18" color="#000000" opacity="0" material="shader: flat; transparent: true;"></a-circle>
                     </a-entity>
                 </a-entity>
 
@@ -194,11 +197,11 @@ export class AREngine {
                                     node.material.emissive = new THREE.Color(0x000000); 
                                     node.material.needsUpdate = true; // FIX: Wajib di Three.js jika mengubah transparent
                                     
-                                    // Hitung arah ledakan menjauh dari origin parent
-                                    const dir = new THREE.Vector3().copy(node.userData.originalPosition).normalize();
+                                    // Hitung arah ledakan menjauh dari origin parent menggunakan koordinat tengah geometri
+                                    const dir = new THREE.Vector3().copy(localCenter).normalize();
                                     if (dir.lengthSq() < 0.001) dir.set(0, 1, 0); // Cegah NaN jika di origin
                                     
-                                    const explodeDist = 30; // Jarak bongkar
+                                    const explodeDist = 50; // Jarak bongkar yang lebih dramatis
                                     const targetPos = node.userData.originalPosition.clone().add(dir.multiplyScalar(explodeDist));
                                     
                                     AFRAME.ANIME({
@@ -235,6 +238,10 @@ export class AREngine {
                         modelContainer.setAttribute('position', '0 0 -20');
                         modelContainer.setAttribute('scale', '0.05 0.05 0.05'); // Ukuran proporsional persis AR
                         modelContainer.setAttribute('rotation', '15 -30 0');
+                        
+                        // Aktifkan Turntable dan Tampilkan Shadow
+                        modelContainer.setAttribute('turntable', 'enabled: true; speed: 0.5');
+                        document.getElementById('drop-shadow').setAttribute('opacity', '0.4');
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
@@ -246,6 +253,10 @@ export class AREngine {
                         modelContainer.setAttribute('position', '0 0 0');
                         modelContainer.setAttribute('scale', '0.05 0.05 0.05');
                         modelContainer.setAttribute('rotation', '0 0 0');
+                        
+                        // Matikan Turntable dan Sembunyikan Shadow
+                        modelContainer.setAttribute('turntable', 'enabled: false');
+                        document.getElementById('drop-shadow').setAttribute('opacity', '0');
                     }
                 });
 
@@ -325,6 +336,8 @@ export class AREngine {
                         this.el.setAttribute('position', '0 0 -20');
                         this.el.setAttribute('scale', '0.05 0.05 0.05');
                         this.el.setAttribute('rotation', '15 -30 0');
+                        this.el.setAttribute('turntable', 'enabled: true');
+                        window.isUserTouching = false;
                     } else {
                         this.el.setAttribute('position', '0 0 0');
                         this.el.setAttribute('scale', '0.05 0.05 0.05');
@@ -333,7 +346,8 @@ export class AREngine {
                 });
 
                 sceneEl.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Cegah browser panning
+                    e.preventDefault(); 
+                    window.isUserTouching = true; // Hentikan Turntable
                     if (e.touches.length === 2) {
                         // Setup Pinch & Twist & Pan
                         const dx = e.touches[0].pageX - e.touches[1].pageX;
@@ -397,3 +411,21 @@ export class AREngine {
         });
     }
 }
+
+// Komponen Turntable Otomatis
+AFRAME.registerComponent('turntable', {
+    schema: {
+        enabled: {type: 'boolean', default: false},
+        speed: {type: 'number', default: 0.5}
+    },
+    tick: function (time, timeDelta) {
+        if (this.data.enabled && !window.isUserTouching) {
+            const rot = this.el.getAttribute('rotation');
+            this.el.setAttribute('rotation', {
+                x: rot.x,
+                y: rot.y + (this.data.speed * (timeDelta / 16)),
+                z: rot.z
+            });
+        }
+    }
+});
