@@ -48,22 +48,25 @@ export class AREngine {
                         <!-- Hologram Tools (Hidden initially) -->
                         <a-entity id="hologram-tools" position="0 0 0" visible="false">
                             <!-- Kunci Pas -->
-                            <a-entity id="kunci-pas" position="0 25 -12" scale="5 5 5" visible="false">
+                            <a-entity id="kunci-pas" position="0 18 -9" scale="2 2 2" visible="false">
                                 <!-- Gagang -->
-                                <a-box position="0 1 0" scale="0.2 2 0.1" color="#ff3333" material="opacity:0.8; transparent:true"></a-box>
-                                <!-- Kepala -->
-                                <a-cylinder position="0 2 0" rotation="90 0 0" radius="0.4" height="0.15" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
-                                <a-box position="0 2.2 0" scale="0.4 0.4 0.2" color="#000000" material="opacity:0"></a-box> <!-- Cutout fake -->
+                                <a-box position="0 0 0" scale="0.3 3 0.2" color="#ff3333" material="opacity:0.9; transparent:true"></a-box>
+                                <!-- Kepala Bawah -->
+                                <a-cylinder position="0 -1.5 0" rotation="90 0 0" radius="0.5" height="0.25" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <!-- Kepala Atas (Capit) -->
+                                <a-cylinder position="0 1.5 0" rotation="90 0 0" radius="0.6" height="0.25" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <a-box position="0 1.8 0" scale="0.6 0.6 0.3" color="#000000" material="opacity:0"></a-box> 
                             </a-entity>
                             
                             <!-- Tabung Oli -->
-                            <a-entity id="tabung-oli" position="0 30 -12" scale="6 6 6" visible="false">
-                                <a-cylinder position="0 0 0" radius="0.5" height="1.5" color="#0055ff" material="opacity:0.85; transparent:true"></a-cylinder>
-                                <a-cone position="0 0.9 0" radius-bottom="0.5" radius-top="0.1" height="0.4" color="#0055ff" material="opacity:0.85; transparent:true"></a-cone>
-                                <a-cylinder position="0 1.2 0" radius="0.1" height="0.2" color="#ffffff"></a-cylinder>
-                                <!-- Tetesan Oli (Animasi turun) -->
-                                <a-sphere id="tetesan-oli" position="0 -1 0" radius="0.1" color="#FACC15" visible="false" material="opacity:0.8; transparent:true"></a-sphere>
+                            <a-entity id="tabung-oli" position="0 22 -9" scale="2.5 2.5 2.5" visible="false">
+                                <a-cylinder position="0 0 0" radius="1" height="3" color="#0055ff" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <a-cone position="0 1.8 0" radius-bottom="1" radius-top="0.2" height="0.8" color="#0055ff" material="opacity:0.9; transparent:true"></a-cone>
+                                <a-cylinder position="0 2.3 0" radius="0.2" height="0.4" color="#ffffff"></a-cylinder>
                             </a-entity>
+                            
+                            <!-- Tetesan Oli (Terpisah agar jatuh lurus ke bawah, tidak miring) -->
+                            <a-sphere id="tetesan-oli" position="-2 15 -9" scale="1.5 1.5 1.5" radius="0.3" color="#FACC15" visible="false" material="opacity:0.9; transparent:true"></a-sphere>
                         </a-entity>
                         
                         <!-- Drop Shadow Fake untuk 2D Showcase -->
@@ -251,35 +254,49 @@ export class AREngine {
                     if (step === 0) {
                         if (kunciPas) kunciPas.setAttribute('visible', 'false');
                         if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                        if (tetesanOli) tetesanOli.setAttribute('visible', 'false');
                     }
                     else if (step === 1) {
                         if (kunciPas) {
                             kunciPas.setAttribute('visible', 'true');
-                            kunciPas.setAttribute('position', '0 25 -12'); 
+                            kunciPas.setAttribute('position', '0 20 -9'); // Melayang sedikit di atas mesin
                             kunciPas.setAttribute('rotation', '0 0 0');
                             
-                            animateEl('kunci-pas', 'position', {x: 0, y: 15, z: -12}, 800);
+                            // Turun nempel ke mesin (y=10)
+                            animateEl('kunci-pas', 'position', {x: 0, y: 10, z: -9}, 600);
                             setTimeout(() => {
-                                animateEl('kunci-pas', 'rotation', {x: 0, y: 1080, z: 0}, 1500);
-                            }, 800);
+                                // Putar poros sumbu Z agar gagang mengayun layaknya membuka baut sesungguhnya
+                                animateEl('kunci-pas', 'rotation', {x: 0, y: 0, z: 270}, 1000);
+                            }, 600);
                         }
                         if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                        if (tetesanOli) tetesanOli.setAttribute('visible', 'false');
                     }
                     else if (step === 2) {
                         if (kunciPas) kunciPas.setAttribute('visible', 'false');
                         if (tabungOli) {
                             tabungOli.setAttribute('visible', 'true');
-                            tabungOli.setAttribute('position', '0 30 -12');
+                            tabungOli.setAttribute('position', '5 22 -9'); // Muncul dari samping kanan atas
                             tabungOli.setAttribute('rotation', '0 0 0');
                             
-                            animateEl('tabung-oli', 'position', {x: 0, y: 20, z: -12}, 800);
+                            // Mendekat ke atas mesin (tapi miring)
+                            animateEl('tabung-oli', 'position', {x: 2, y: 15, z: -9}, 800);
                             setTimeout(() => {
-                                animateEl('tabung-oli', 'rotation', {x: 0, y: 0, z: -45}, 500);
+                                // Miring seolah menuang ke arah kiri bawah
+                                animateEl('tabung-oli', 'rotation', {x: 0, y: 0, z: 60}, 500);
+                                
                                 setTimeout(() => {
                                     if (tetesanOli) {
                                         tetesanOli.setAttribute('visible', 'true');
-                                        tetesanOli.setAttribute('position', '0 -1 0');
-                                        animateEl('tetesan-oli', 'position', {x: 0, y: -10, z: 0}, 1000);
+                                        tetesanOli.setAttribute('position', '0 15 -9'); // Jatuh dari bibir corong
+                                        // Tetesan jatuh vertikal lurus ke mesin (y=8)
+                                        animateEl('tetesan-oli', 'position', {x: 0, y: 8, z: -9}, 800);
+                                        
+                                        // Ulangi tetesan sekali lagi biar realistis
+                                        setTimeout(() => {
+                                            tetesanOli.setAttribute('position', '0 15 -9');
+                                            animateEl('tetesan-oli', 'position', {x: 0, y: 8, z: -9}, 800);
+                                        }, 900);
                                     }
                                 }, 600);
                             }, 800);
