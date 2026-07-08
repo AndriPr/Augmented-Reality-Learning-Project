@@ -200,6 +200,7 @@ export class AREngine {
                                     node.material.transparent = false;
                                     node.material.opacity = 1;
                                     node.material.emissive = new THREE.Color(0x333333); 
+                                    node.material.needsUpdate = true; // FIX: Wajib di Three.js jika mengubah transparent
                                     
                                     AFRAME.ANIME({
                                         targets: node.position,
@@ -214,6 +215,7 @@ export class AREngine {
                                     node.material.transparent = true;
                                     node.material.opacity = 0.2;
                                     node.material.emissive = new THREE.Color(0x000000); 
+                                    node.material.needsUpdate = true; // FIX: Wajib di Three.js jika mengubah transparent
                                     
                                     // Hitung arah ledakan menjauh dari origin parent
                                     const dir = new THREE.Vector3().copy(node.userData.originalPosition).normalize();
