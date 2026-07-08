@@ -35,17 +35,19 @@ export class AREngine {
 
                 <!-- TARGET 0: Model Utama -->
                 <a-entity id="target0" mindar-image-target="targetIndex: 0">
-                    <a-entity position="0 0 0" scale="1 1 1">
+                    <!-- Container untuk Touch Controls (Scale & Rotation) -->
+                    <a-entity id="interactive-model" position="0 0 0" scale="0.05 0.05 0.05" rotation="0 0 0" touch-controller>
+                        
                         <!-- Objek Primitif yang DIJAMIN MUNCUL (Kubus Kuning) -->
-                        <a-box id="part1" color="#FFC000" position="0 0.5 0" scale="0.8 0.8 0.8" opacity="0.8"
-                            animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"
-                            class="clickable" clickable-model>
+                        <a-box color="#FFC000" position="0 20 0" scale="10 10 10" opacity="0.8"
+                            animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear">
                         </a-box>
                         
-                        <!-- Model GLB Asli (Gearbox/Lainnya) -->
+                        <!-- Model GLB Kompleks (Mobil Buggy) -->
                         <a-entity 
-                            gltf-model="#model-gearbox" 
-                            position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0" 
+                            id="gltf-main-model"
+                            gltf-model="#model-complex" 
+                            position="0 0 0" rotation="0 0 0" 
                             class="clickable" clickable-model>
                         </a-entity>
                     </a-entity>
@@ -68,23 +70,24 @@ export class AREngine {
 
         // Inject large assets dynamically to track loading
         const assetsEl = document.getElementById('ar-assets');
-        const gearboxAsset = document.createElement('a-asset-item');
-        gearboxAsset.setAttribute('id', 'model-gearbox');
-        gearboxAsset.setAttribute('src', '/assets/models/GearboxAssy.glb');
+        const complexAsset = document.createElement('a-asset-item');
+        complexAsset.setAttribute('id', 'model-complex');
+        complexAsset.setAttribute('src', '/assets/models/Buggy.glb');
         
         // Track asset loading
-        gearboxAsset.addEventListener('loaded', () => {
+        complexAsset.addEventListener('loaded', () => {
             this.ui.updateLoadingProgress(80, "Memulai Kamera...");
         });
-        gearboxAsset.addEventListener('error', () => {
-            console.error("Gagal memuat model gearbox");
+        complexAsset.addEventListener('error', () => {
+            console.error("Gagal memuat model kompleks");
             this.ui.updateLoadingProgress(100, "Error memuat aset");
         });
 
-        assetsEl.appendChild(gearboxAsset);
+        assetsEl.appendChild(complexAsset);
 
-        // Register custom A-Frame component for clicking BEFORE scene loaded fully
+        // Register custom A-Frame components
         this.registerClickComponent();
+        this.registerTouchComponent();
 
         // Listen for A-Frame scene loaded
         const sceneEl = container.querySelector('a-scene');
@@ -134,6 +137,69 @@ export class AREngine {
 
                     if (partName && db.parts[partName]) {
                         self.ui.showInfoPanel(self.currentActiveTarget, partName);
+                    } else {
+                        // Fallback jika bagian yang diklik belum ada di database
+                        self.ui.infoTitle.textContent = "Bagian: " + (partName || "Unknown");
+                        self.ui.infoFunction.textContent = "Informasi belum tersedia.";
+                        self.ui.infoDesc.textContent = "Bagian kompleks ini dapat Anda tambahkan ke database nanti.";
+                        self.ui.infoPanel.classList.add('visible');
+                    }
+                });
+            }
+        });
+    }
+
+    registerTouchComponent() {
+        if(AFRAME.components['touch-controller']) return;
+
+        AFRAME.registerComponent('touch-controller', {
+            init: function () {
+                this.initialScale = this.el.object3D.scale.x;
+                this.initialDistance = 0;
+                this.previousTouch = null;
+
+                const sceneEl = document.querySelector('a-scene');
+
+                sceneEl.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 2) {
+                        // Setup Pinch
+                        const dx = e.touches[0].pageX - e.touches[1].pageX;
+                        const dy = e.touches[0].pageY - e.touches[1].pageY;
+                        this.initialDistance = Math.hypot(dx, dy);
+                        this.initialScale = this.el.object3D.scale.x;
+                    } else if (e.touches.length === 1) {
+                        // Setup Drag Rotate
+                        this.previousTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                    }
+                });
+
+                sceneEl.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 2) {
+                        // Pinch to Zoom
+                        const dx = e.touches[0].pageX - e.touches[1].pageX;
+                        const dy = e.touches[0].pageY - e.touches[1].pageY;
+                        const currentDistance = Math.hypot(dx, dy);
+                        
+                        const scaleFactor = currentDistance / this.initialDistance;
+                        const newScale = this.initialScale * scaleFactor;
+                        
+                        // Limit scale (min 0.01, max 0.5 for Buggy)
+                        const clampedScale = Math.max(0.01, Math.min(newScale, 0.5));
+                        this.el.setAttribute('scale', `${clampedScale} ${clampedScale} ${clampedScale}`);
+                        
+                    } else if (e.touches.length === 1 && this.previousTouch) {
+                        // Drag to Rotate
+                        const deltaX = e.touches[0].pageX - this.previousTouch.x;
+                        const deltaY = e.touches[0].pageY - this.previousTouch.y;
+                        
+                        const rotation = this.el.getAttribute('rotation');
+                        this.el.setAttribute('rotation', {
+                            x: rotation.x - deltaY * 0.5,
+                            y: rotation.y + deltaX * 0.5,
+                            z: rotation.z
+                        });
+                        
+                        this.previousTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
                     }
                 });
             }
