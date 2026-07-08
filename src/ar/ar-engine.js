@@ -37,23 +37,7 @@ export class AREngine {
                     <!-- Container untuk Touch Controls (Scale & Rotation) -->
                     <a-entity id="interactive-model" position="0 0 0" scale="0.05 0.05 0.05" rotation="0 0 0" touch-controller>
                         
-                        <!-- HOTSPOTS (Petunjuk Visual - Non Clickable now since we use UI) -->
-                        <a-entity id="hotspots" position="0 0 0">
-                            <!-- Hotspot Ban -->
-                            <a-sphere id="ban" color="#00A2E9" radius="4" position="15 5 15" opacity="0.6"
-                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
-                            </a-sphere>
-                            
-                            <!-- Hotspot Mesin Belakang -->
-                            <a-sphere id="mesin" color="#FFC000" radius="4" position="0 10 -15" opacity="0.6"
-                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
-                            </a-sphere>
-
-                            <!-- Hotspot Rangka -->
-                            <a-sphere id="casis" color="#ff3b30" radius="4" position="0 25 0" opacity="0.6"
-                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
-                            </a-sphere>
-                        </a-entity>
+                        <!-- HOTSPOTS Removed (We now strictly use the UI for isolation) -->
 
                         <!-- Model GLB Kompleks (Mobil Buggy) -->
                         <a-entity 
@@ -158,13 +142,6 @@ export class AREngine {
                             }
                         });
                     }
-                    
-                    // Kembalikan semua hotspot
-                    const hotspots = document.querySelectorAll('#hotspots a-sphere');
-                    hotspots.forEach(h => {
-                        h.setAttribute('visible', 'true');
-                        h.setAttribute('animation', 'property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800');
-                    });
                 });
 
                 // Listener ketika tombol di Action Bar UI diklik
@@ -236,17 +213,6 @@ export class AREngine {
                             }
                         });
                     }
-
-                    // Sembunyikan semua hotspot, KECUALI yang diklik
-                    const hotspots = document.querySelectorAll('#hotspots a-sphere');
-                    hotspots.forEach(h => {
-                        if (h.getAttribute('id') === partKey) {
-                            h.setAttribute('visible', 'true');
-                            h.setAttribute('animation', 'property: scale; to: 3 3 3; dir: alternate; loop: true; dur: 500');
-                        } else {
-                            h.setAttribute('visible', 'false');
-                        }
-                    });
                 });
 
                 // Listener Toggle AR/2D Mode
