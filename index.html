@@ -3,103 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Learning Application</title>
+    <title>AR PLN Learning System</title>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- A-Frame and MindAR Libraries -->
+    <!-- A-Frame & MindAR (Loaded globally to prevent conflicts) -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-    
-    <!-- App Logic -->
-    <script src="app.js"></script>
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/src/styles/global.css">
+    <link rel="stylesheet" href="/src/styles/ui.css">
 </head>
 <body>
 
-    <!-- UI Layer -->
-    <div id="ui-container">
-        <!-- Header & Marker Menu -->
-        <div id="app-header" class="app-header">
-            Modul Pembelajaran Interaktif AR
-        </div>
-        <button id="marker-menu-btn" class="menu-btn">⬇️ Download Marker</button>
-
-        <!-- Scanning Indicator -->
-        <div id="scan-indicator" class="scan-indicator">
-            Arahkan kamera ke target gambar
-        </div>
-
-        <!-- Marker Download Modal (Hidden by default) -->
-        <div id="marker-modal" class="modal-overlay hidden">
-            <div class="modal-content">
-                <h3>Download Marker AR</h3>
-                <p style="margin-bottom: 15px; font-size: 0.9rem;">Print gambar ini lalu scan dengan aplikasi AR Anda.</p>
-                <div class="qr-download-list">
-                    <!-- Gunakan link gambar dari Github Anda -->
-                    <a href="https://raw.githubusercontent.com/AndriPr/Augmented-Reality-Learning-Project/main/assets/targets/marker_gearbox.png" target="_blank">Unduh Marker 1 (Gearbox)</a>
-                    <a href="https://raw.githubusercontent.com/AndriPr/Augmented-Reality-Learning-Project/main/assets/targets/marker_trafo.png" target="_blank">Unduh Marker 2 (Trafo)</a>
-                </div>
-                <button id="close-modal-btn" class="close-btn">Tutup</button>
+    <!-- Loading Screen (Premium UI) -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader-content">
+            <div class="logo-container">
+                <div class="pln-lightning">⚡</div>
             </div>
+            <h2>AR PLN System</h2>
+            <p>Memuat Aset 3D & Sistem Pelacakan...</p>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="loading-text" class="loading-text-small">Menyiapkan Kamera...</p>
         </div>
+    </div>
 
-        <!-- Info Panel (Glassmorphism) -->
-        <div id="info-panel" class="glass-panel">
-            <div class="info-box">
-                <h2 id="info-title" class="info-title">Pilih Komponen</h2>
-                <div id="info-function" class="info-function">Silakan klik tombol atau sentuh model</div>
-                <p id="info-desc" class="info-desc">Arahkan kamera Anda pada marker, lalu tekan bagian 3D model untuk melihat deskripsinya.</p>
+    <!-- UI Overlay (Glassmorphism) -->
+    <div id="ui-layer" class="ui-layer hidden">
+        <header class="glass-header">
+            <div class="header-content">
+                <span class="pulse-dot"></span>
+                <span id="status-text">Mencari Marker...</span>
+            </div>
+            <button id="btn-download-marker" class="btn-glass">Unduh Marker</button>
+        </header>
+
+        <!-- Dynamic Info Panel -->
+        <div id="info-panel" class="glass-panel hidden">
+            <div class="panel-header">
+                <h3 id="info-title">Nama Komponen</h3>
+                <span class="badge">PLN</span>
+            </div>
+            <div class="panel-body">
+                <p id="info-function" class="function-text">Fungsi komponen</p>
+                <p id="info-desc" class="desc-text">Deskripsi lengkap</p>
             </div>
             
-            <!-- Quick Navigation Buttons (Diisi otomatis oleh app.js) -->
-            <div id="button-container" class="button-container">
-                <!-- Tombol akan di-generate oleh javascript berdasarkan target -->
+            <div id="buttons-container" class="buttons-grid">
+                <!-- Buttons injected by JS -->
             </div>
         </div>
     </div>
 
-    <!-- A-Frame Scene for MindAR dengan Parameter Optimasi -->
-    <a-scene 
-        mindar-image="imageTargetSrc: ./assets/targets/targets.mind; autoStart: true; filterMinCF: 0.001; filterBeta: 1000; missTolerance: 2;" 
-        color-space="sRGB" 
-        renderer="colorManagement: true, physicallyCorrectLights, antialias: true, logarithmicDepthBuffer: true" 
-        vr-mode-ui="enabled: false" 
-        device-orientation-permission-ui="enabled: false"
-        cursor="rayOrigin: mouse"
-        raycaster="objects: .clickable">
+    <!-- Download Marker Modal -->
+    <div id="modal-marker" class="modal hidden">
+        <div class="modal-box glass-panel">
+            <h3>Pilih Marker</h3>
+            <p>Silakan scan marker di bawah ini:</p>
+            <div class="marker-links">
+                <a href="https://raw.githubusercontent.com/AndriPr/Augmented-Reality-Learning-Project/main/public/assets/targets/marker_gearbox.png" target="_blank" class="btn-primary">Marker Gearbox</a>
+                <a href="https://raw.githubusercontent.com/AndriPr/Augmented-Reality-Learning-Project/main/public/assets/targets/marker_trafo.png" target="_blank" class="btn-primary">Marker Trafo</a>
+            </div>
+            <button id="btn-close-modal" class="btn-outline">Tutup</button>
+        </div>
+    </div>
 
-        <a-assets>
-            <a-asset-item id="real-model" src="./assets/models/GearboxAssy.glb"></a-asset-item>
-        </a-assets>
+    <!-- AR Scene (Injected by JS to ensure lifecycle control) -->
+    <div id="ar-container"></div>
 
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
-        <!-- TARGET 0: Model Gearbox -->
-        <a-entity id="target0" mindar-image-target="targetIndex: 0">
-            <a-entity 
-                gltf-model="#real-model" 
-                position="0 0 0" 
-                scale="0.5 0.5 0.5" 
-                rotation="0 0 0" 
-                class="clickable"
-                clickable-model>
-            </a-entity>
-        </a-entity>
-
-        <!-- TARGET 1: Model Trafo (Placeholder menggunakan Primitive 3D) -->
-        <a-entity id="target1" mindar-image-target="targetIndex: 1">
-            <!-- Muncul ketika gambar kedua di-scan -->
-            <a-entity position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0">
-                <a-box id="Bushing" color="#FF3B30" position="-0.7 0.5 0" scale="0.5 1 0.5" class="clickable" clickable-model></a-box>
-                <a-cylinder id="Radiator" color="#34C759" position="0.7 0.5 0" radius="0.3" height="0.8" class="clickable" clickable-model></a-cylinder>
-            </a-entity>
-        </a-entity>
-
-    </a-scene>
-
+    <!-- Main Entry Point -->
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,180 @@
+/* UI Layer (Overlay on top of AR) */
+.ui-layer {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; /* Let clicks pass through to AR */
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Glassmorphism Classes */
+.glass-header, .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    pointer-events: auto; /* Catch clicks on UI elements */
+}
+
+/* Header */
+.glass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    animation: slideDown 0.5s ease-out;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 10px; height: 10px;
+    background: #ff3b30;
+    border-radius: 50%;
+    animation: blink 1s infinite alternate;
+}
+.pulse-dot.active {
+    background: #34c759;
+}
+
+.btn-glass {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-glass:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Info Panel */
+.glass-panel {
+    padding: 20px;
+    margin-bottom: 20px;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.glass-panel.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.panel-header h3 {
+    color: var(--pln-blue);
+    font-size: 1.2rem;
+}
+
+.badge {
+    background: var(--pln-yellow);
+    color: black;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.function-text {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.desc-text {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+/* Buttons Grid */
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.btn-part {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+.btn-part.active {
+    background: var(--pln-blue);
+    border-color: var(--pln-blue);
+    box-shadow: 0 4px 15px rgba(0,162,233,0.4);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    pointer-events: auto;
+}
+.modal-box {
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+.marker-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+.btn-primary {
+    display: block;
+    background: var(--pln-blue);
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+.btn-outline {
+    background: transparent;
+    border: 1px solid #ff3b30;
+    color: #ff3b30;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes blink {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
