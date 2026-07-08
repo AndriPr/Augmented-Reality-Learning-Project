@@ -14,7 +14,7 @@ export class AREngine {
         
         const sceneHTML = `
             <a-scene 
-                mindar-image="imageTargetSrc: /assets/targets/targets.mind; autoStart: true;" 
+                mindar-image="imageTargetSrc: /assets/targets/targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 5;" 
                 color-space="sRGB" 
                 renderer="colorManagement: true, physicallyCorrectLights, antialias: true" 
                 vr-mode-ui="enabled: false" 
@@ -37,11 +37,27 @@ export class AREngine {
                     <!-- Container untuk Touch Controls (Scale & Rotation) -->
                     <a-entity id="interactive-model" position="0 0 0" scale="0.05 0.05 0.05" rotation="0 0 0" touch-controller>
                         
-                        <!-- Objek Primitif yang DIJAMIN MUNCUL (Kubus Kuning) -->
-                        <a-box color="#FFC000" position="0 20 0" scale="10 10 10" opacity="0.8"
-                            animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear">
-                        </a-box>
-                        
+                        <!-- HOTSPOTS (Petunjuk Visual Interaktif) -->
+                        <a-entity id="hotspots" position="0 0 0">
+                            <!-- Hotspot Ban -->
+                            <a-sphere id="ban-depan" color="#00A2E9" radius="4" position="15 5 15" opacity="0.6"
+                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800"
+                                class="clickable" clickable-model>
+                            </a-sphere>
+                            
+                            <!-- Hotspot Mesin Belakang -->
+                            <a-sphere id="mesin-belakang" color="#FFC000" radius="4" position="0 10 -15" opacity="0.6"
+                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800"
+                                class="clickable" clickable-model>
+                            </a-sphere>
+
+                            <!-- Hotspot Rangka -->
+                            <a-sphere id="rangka-utama" color="#ff3b30" radius="4" position="0 25 0" opacity="0.6"
+                                animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800"
+                                class="clickable" clickable-model>
+                            </a-sphere>
+                        </a-entity>
+
                         <!-- Model GLB Kompleks (Mobil Buggy) -->
                         <a-entity 
                             id="gltf-main-model"

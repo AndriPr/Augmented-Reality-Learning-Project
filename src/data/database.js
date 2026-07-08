@@ -4,15 +4,20 @@ export const modelDatabase = {
         name: 'Proyek Pembelajaran Undip',
         badge: 'UNDIP',
         parts: {
-            'Gearbox': {
-                title: 'Gearbox Utama',
-                function: 'Mentransmisikan daya mekanis',
-                desc: 'Bagian utama dari mesin gearbox yang membungkus semua roda gigi. Berfungsi menjaga rasio putaran mesin.'
+            'ban-depan': {
+                title: 'Ban & Suspensi',
+                function: 'Peredam kejut dan pergerakan',
+                desc: 'Komponen ban khusus off-road yang dirancang untuk meredam guncangan ekstrem. Dilengkapi dengan suspensi independen.'
             },
-            'part1': { // Fallback if no specific mesh is clicked
-                title: 'Komponen Gearbox',
-                function: 'Fungsi Gearbox',
-                desc: 'Pilih bagian spesifik pada model untuk melihat fungsinya.'
+            'mesin-belakang': {
+                title: 'Blok Mesin',
+                function: 'Penghasil tenaga gerak utama',
+                desc: 'Mesin pembakaran internal atau motor listrik yang memberikan tenaga dorong ke gardan belakang mobil Buggy.'
+            },
+            'rangka-utama': {
+                title: 'Rangka Pelindung (Roll Cage)',
+                function: 'Melindungi pengemudi',
+                desc: 'Struktur tubular baja yang sangat kuat, dirancang untuk melindungi pengemudi jika mobil terbalik (rollover).'
             }
         }
     },
