@@ -59,23 +59,19 @@
         cursor="rayOrigin: mouse"
         raycaster="objects: .clickable">
 
-        <a-assets>
-            <!-- GANTI src ini dengan lokasi file .glb Anda sendiri, cth: ./assets/models/model.glb -->
-            <a-asset-item id="my-model" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/custom/models/raccoon/scene.gltf"></a-asset-item>
-        </a-assets>
-
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <!-- Image Target -->
         <a-entity id="target-image" mindar-image-target="targetIndex: 0">
-            <!-- 3D Model yang muncul di atas target gambar -->
-            <a-entity 
-                gltf-model="#my-model" 
-                position="0 0 0" 
-                scale="0.1 0.1 0.1" 
-                rotation="0 0 0" 
-                class="clickable"
-                clickable-model>
+            <!-- 3D Model Placeholder yang Bebas Error -->
+            <!-- Nanti ganti seluruh isi 'model-container' dengan: <a-entity gltf-model="./assets/models/modelku.glb" class="clickable" clickable-model></a-entity> -->
+            <a-entity id="model-container" position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0">
+                <!-- Komponen 1 -->
+                <a-box id="part1" color="#FF3B30" position="-0.7 0.5 0" scale="0.5 1 0.5" class="clickable" clickable-model animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear"></a-box>
+                <!-- Komponen 2 -->
+                <a-sphere id="part2" color="#007AFF" position="0.7 0.5 0" radius="0.4" class="clickable" clickable-model animation="property: position; dir: alternate; to: 0.7 0.8 0; loop: true; dur: 2000"></a-sphere>
+                <!-- Komponen 3 -->
+                <a-cylinder id="part3" color="#34C759" position="0 1.5 0" radius="0.3" height="0.8" class="clickable" clickable-model></a-cylinder>
             </a-entity>
         </a-entity>
 

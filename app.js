@@ -81,27 +81,27 @@ document.addEventListener("DOMContentLoaded", () => {
     AFRAME.registerComponent('clickable-model', {
         init: function () {
             this.el.addEventListener('click', (evt) => {
-                // Determine which part of the 3D model was clicked
-                // evt.detail.intersection.object.name gets the name of the mesh inside the GLTF/GLB
-                const meshName = evt.detail.intersection ? evt.detail.intersection.object.name : null;
+                if (!evt.detail.intersection) return;
+
+                // 1. Coba ambil nama mesh dari 3D model (GLTF/GLB)
+                let partName = evt.detail.intersection.object.name;
                 
-                console.log("Clicked mesh name:", meshName);
-
-                if (meshName) {
-                    // Match the mesh name with our data dictionary
-                    // Note: You might need to adjust this depending on how your 3D model meshes are named
-                    // For testing, we just simulate clicking 'part1' if any part is clicked
-                    // REMOVE the placeholder logic below and use actual mesh names:
-                    
-                    /* REAL LOGIC:
-                    if (modelPartsData[meshName]) {
-                        showInfo(meshName);
+                // 2. Jika tidak ada, coba ambil dari ID atau data-part elemen HTML (berguna untuk testing primitives)
+                if (!partName || !modelPartsData[partName]) {
+                    const el = evt.detail.intersection.object.el;
+                    if (el) {
+                        partName = el.getAttribute('id') || el.getAttribute('data-part');
                     }
-                    */
+                }
 
-                    // PLACEHOLDER LOGIC:
-                    const randomPart = ['part1', 'part2', 'part3'][Math.floor(Math.random() * 3)];
-                    showInfo(randomPart);
+                console.log("Bagian yang diklik:", partName);
+
+                // Tampilkan info jika bagian yang diklik ada di database kita
+                if (partName && modelPartsData[partName]) {
+                    showInfo(partName);
+                } else {
+                    // Fallback jika tidak terdeteksi spesifik (misalnya ngeklik keseluruhan model)
+                    console.log("Bagian tidak dikenali di database");
                 }
             });
         }
