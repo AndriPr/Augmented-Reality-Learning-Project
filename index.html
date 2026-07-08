@@ -22,14 +22,30 @@
 
     <!-- UI Layer -->
     <div id="ui-container">
-        <!-- Header -->
-        <div class="app-header">
+        <!-- Header & Marker Menu -->
+        <div id="app-header" class="app-header">
             Modul Pembelajaran Interaktif AR
         </div>
+        <button id="marker-menu-btn" class="menu-btn">⬇️ Download Marker</button>
 
         <!-- Scanning Indicator -->
         <div id="scan-indicator" class="scan-indicator">
             Arahkan kamera ke target gambar
+        </div>
+
+        <!-- Marker Download Modal (Hidden by default) -->
+        <div id="marker-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3>Download Marker AR</h3>
+                <p style="margin-bottom: 15px; font-size: 0.9rem;">Print gambar ini lalu scan dengan aplikasi AR Anda.</p>
+                <div class="qr-download-list">
+                    <!-- Gunakan link gambar dari Github/MindAR sebagai contoh -->
+                    <a href="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.png" target="_blank">Unduh Marker 1 (Gearbox)</a>
+                    <!-- Placeholder untuk Marker 2 (Bisa diganti dengan QR/Gambar Anda) -->
+                    <a href="#" target="_blank" style="background:#555;">Unduh Marker 2 (Trafo - Belum Tersedia)</a>
+                </div>
+                <button id="close-modal-btn" class="close-btn">Tutup</button>
+            </div>
         </div>
 
         <!-- Info Panel (Glassmorphism) -->
@@ -40,11 +56,9 @@
                 <p id="info-desc" class="info-desc">Arahkan kamera Anda pada marker, lalu tekan bagian 3D model untuk melihat deskripsinya.</p>
             </div>
             
-            <!-- Quick Navigation Buttons -->
-            <div class="button-container">
-                <button class="part-btn" data-part="part1">Bagian 1</button>
-                <button class="part-btn" data-part="part2">Bagian 2</button>
-                <button class="part-btn" data-part="part3">Bagian 3</button>
+            <!-- Quick Navigation Buttons (Diisi otomatis oleh app.js) -->
+            <div id="button-container" class="button-container">
+                <!-- Tombol akan di-generate oleh javascript berdasarkan target -->
             </div>
         </div>
     </div>
@@ -65,9 +79,8 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- Image Target -->
-        <a-entity id="target-image" mindar-image-target="targetIndex: 0">
-            <!-- 3D Model Asli (Gearbox) -->
+        <!-- TARGET 0: Model Gearbox -->
+        <a-entity id="target0" mindar-image-target="targetIndex: 0">
             <a-entity 
                 gltf-model="#real-model" 
                 position="0 0 0" 
@@ -75,6 +88,15 @@
                 rotation="0 0 0" 
                 class="clickable"
                 clickable-model>
+            </a-entity>
+        </a-entity>
+
+        <!-- TARGET 1: Model Trafo (Placeholder menggunakan Primitive 3D) -->
+        <a-entity id="target1" mindar-image-target="targetIndex: 1">
+            <!-- Muncul ketika gambar kedua di-scan -->
+            <a-entity position="0 0 0" scale="0.5 0.5 0.5" rotation="0 0 0">
+                <a-box id="Bushing" color="#FF3B30" position="-0.7 0.5 0" scale="0.5 1 0.5" class="clickable" clickable-model></a-box>
+                <a-cylinder id="Radiator" color="#34C759" position="0.7 0.5 0" radius="0.3" height="0.8" class="clickable" clickable-model></a-cylinder>
             </a-entity>
         </a-entity>
 
