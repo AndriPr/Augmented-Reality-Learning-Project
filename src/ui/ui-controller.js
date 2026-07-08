@@ -79,13 +79,7 @@ export class UIController {
                 this.toggleARMode(!this.is2DMode);
             });
         }
-        
-                        header.style.opacity = '0.2'; // Make it very transparent but still clickable to bring it back
-                    }
-                }
-            });
-        }
-        
+
         const btnResetView = document.getElementById('btn-reset-view');
         if (btnResetView) {
             btnResetView.addEventListener('click', () => {
