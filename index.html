@@ -63,8 +63,11 @@
         </header>
 
         <!-- Static Action Bar (Daftar Interaktif) -->
-        <div id="action-bar" class="action-bar hidden">
-            <p class="action-title">Pilih Komponen:</p>
+        <div id="action-bar" class="action-bar">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <p class="action-title" style="margin-bottom: 0;">Pilih Komponen:</p>
+                <button id="btn-collapse-action" class="btn-glass" style="padding: 4px 8px; font-size: 0.7rem;">▼</button>
+            </div>
             <div id="buttons-container" class="buttons-horizontal-scroll">
                 <!-- Buttons injected by JS -->
             </div>
@@ -138,6 +141,6 @@
     <div id="ar-container"></div>
 
     <!-- Main Entry Point -->
-    <script type="module" src="/src/main.js?v=9"></script>
+    <script type="module" src="/src/main.js?v=10"></script>
 </body>
 </html>

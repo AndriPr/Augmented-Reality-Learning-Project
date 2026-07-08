@@ -19,6 +19,7 @@ export class UIController {
         this.buttonsContainer = document.getElementById('buttons-container');
         this.btnToggleMode = document.getElementById('btn-toggle-mode');
         this.virtualBg = document.getElementById('virtual-bg');
+        this.btnCollapseAction = document.getElementById('btn-collapse-action');
 
         // State UI
         this.is2DMode = false;
@@ -29,6 +30,17 @@ export class UIController {
     }
 
     initEvents() {
+        if (this.btnCollapseAction) {
+            this.btnCollapseAction.addEventListener('click', () => {
+                this.actionBar.classList.toggle('collapsed');
+                if (this.actionBar.classList.contains('collapsed')) {
+                    this.btnCollapseAction.textContent = '▲';
+                } else {
+                    this.btnCollapseAction.textContent = '▼';
+                }
+            });
+        }
+        
         // Binding Actions
         
         this.btnDownload2D = document.getElementById('btn-download-2d');
@@ -209,9 +221,6 @@ export class UIController {
             this.infoFunction.textContent = data.function;
             this.infoDesc.textContent = data.desc;
             
-            // Sembunyikan action bar agar layar lebih lega
-            this.actionBar.classList.add('hidden');
-            
             // Bersihkan step controller lama jika ada
             const oldStepCtrl = document.getElementById('step-controller');
             if(oldStepCtrl) oldStepCtrl.remove();
@@ -308,7 +317,6 @@ export class UIController {
             this.infoPanel.appendChild(resetBtn);
         }
 
-        this.infoPanel.classList.remove('hidden');
         this.infoPanel.classList.add('visible');
 
         // Highlight active button (if exists)

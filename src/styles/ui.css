@@ -96,7 +96,7 @@
 }
 #info-panel {
     position: fixed;
-    bottom: 20px;
+    bottom: 85px;
     left: 10px;
     right: 10px;
     transform: translateY(150%);
@@ -178,6 +178,13 @@
 .action-bar.hidden {
     transform: translateY(100%);
     opacity: 0;
+}
+
+.action-bar.collapsed #buttons-container {
+    display: none;
+}
+.action-bar.collapsed {
+    padding-bottom: 15px;
 }
 
 .action-title {
