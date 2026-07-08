@@ -11,6 +11,7 @@ export class UIController {
         this.statusText = document.getElementById('status-text');
         this.pulseDot = document.querySelector('.pulse-dot');
         
+        this.actionBar = document.getElementById('action-bar');
         this.infoPanel = document.getElementById('info-panel');
         this.infoTitle = document.getElementById('info-title');
         this.infoFunction = document.getElementById('info-function');
@@ -49,12 +50,14 @@ export class UIController {
     onTargetFound(targetId) {
         this.statusText.textContent = `Melacak: ${modelDatabase[targetId]?.name || 'Objek'}`;
         this.pulseDot.classList.add('active');
+        this.actionBar.classList.remove('hidden');
         this.buildButtons(targetId);
     }
 
     onTargetLost() {
         this.statusText.textContent = 'Mencari Marker...';
         this.pulseDot.classList.remove('active');
+        this.actionBar.classList.add('hidden');
         this.hideInfoPanel();
     }
 
@@ -67,7 +70,10 @@ export class UIController {
             const btn = document.createElement('button');
             btn.className = 'btn-part';
             btn.textContent = db.parts[partKey].title;
-            btn.addEventListener('click', () => this.showInfoPanel(targetId, partKey));
+            btn.addEventListener('click', () => {
+                this.showInfoPanel(targetId, partKey);
+                window.dispatchEvent(new CustomEvent('isolatePart', { detail: partKey }));
+            });
             this.buttonsContainer.appendChild(btn);
         });
     }
