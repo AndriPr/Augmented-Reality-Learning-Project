@@ -30,6 +30,9 @@ export class AREngine {
                 <a-light type="ambient" color="#FFFFFF" intensity="2.5"></a-light>
                 <a-light type="directional" color="#FFFFFF" intensity="1.5" position="-1 2 1"></a-light>
 
+                <!-- Virtual Sky for 2D Mode -->
+                <a-sky id="virtual-sky" color="#0f172a" visible="false"></a-sky>
+
                 <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
                 <!-- TARGET 0: Model Utama -->
@@ -256,27 +259,30 @@ export class AREngine {
                     const camera = document.querySelector('a-camera');
                     const target = document.getElementById('target0');
                     const video = document.querySelector('video');
+                    const virtualSky = document.getElementById('virtual-sky');
 
                     if (is2D) {
                         // Mode 2D Viewer
                         if (video) video.style.display = 'none';
+                        if (virtualSky) virtualSky.setAttribute('visible', 'true');
                         
                         // Gunakan object3D.add untuk mencegah reload DOM A-Frame dan menghindari efek hidden dari target
                         camera.object3D.add(modelContainer.object3D); 
                         modelContainer.object3D.visible = true;
                         
-                        modelContainer.setAttribute('position', '0 -0.5 -3');
-                        modelContainer.setAttribute('scale', '0.05 0.05 0.05');
-                        modelContainer.setAttribute('rotation', '0 0 0');
+                        modelContainer.object3D.position.set(0, -1, -5);
+                        modelContainer.object3D.scale.set(0.08, 0.08, 0.08);
+                        modelContainer.object3D.rotation.set(0, 0, 0);
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
+                        if (virtualSky) virtualSky.setAttribute('visible', 'false');
                         
                         target.object3D.add(modelContainer.object3D);
                         
-                        modelContainer.setAttribute('position', '0 0 0');
-                        modelContainer.setAttribute('scale', '0.05 0.05 0.05');
-                        modelContainer.setAttribute('rotation', '0 0 0');
+                        modelContainer.object3D.position.set(0, 0, 0);
+                        modelContainer.object3D.scale.set(0.05, 0.05, 0.05);
+                        modelContainer.object3D.rotation.set(0, 0, 0);
                     }
                 });
 
