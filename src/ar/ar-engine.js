@@ -226,6 +226,7 @@ export class AREngine {
                     if (is2D) {
                         // Mode 2D Viewer
                         if (video) video.style.display = 'none';
+                        window.is2DModeLocal = true;
                         
                         // Pindahkan ke kamera agar mengikuti layar
                         camera.object3D.add(modelContainer.object3D); 
@@ -238,6 +239,7 @@ export class AREngine {
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
+                        window.is2DModeLocal = false;
                         
                         // Kembalikan ke marker target
                         target.object3D.add(modelContainer.object3D);
@@ -314,18 +316,37 @@ export class AREngine {
                 this.initialAngle = 0;
                 this.initialZRot = 0;
                 this.previousTouch = null;
+                this.previousPan = null;
 
                 const sceneEl = document.querySelector('a-scene');
 
+                // Listener untuk Reset View
+                window.addEventListener('resetView', () => {
+                    if (window.is2DModeLocal) {
+                        this.el.setAttribute('position', '0 -2 -15');
+                        this.el.setAttribute('scale', '0.2 0.2 0.2');
+                        this.el.setAttribute('rotation', '25 -45 0');
+                    } else {
+                        this.el.setAttribute('position', '0 0 0');
+                        this.el.setAttribute('scale', '0.05 0.05 0.05');
+                        this.el.setAttribute('rotation', '0 0 0');
+                    }
+                });
+
                 sceneEl.addEventListener('touchstart', (e) => {
                     if (e.touches.length === 2) {
-                        // Setup Pinch & Twist
+                        // Setup Pinch & Twist & Pan
                         const dx = e.touches[0].pageX - e.touches[1].pageX;
                         const dy = e.touches[0].pageY - e.touches[1].pageY;
                         this.initialDistance = Math.hypot(dx, dy);
                         this.initialScale = this.el.object3D.scale.x;
                         this.initialAngle = Math.atan2(dy, dx);
                         this.initialZRot = this.el.getAttribute('rotation').z;
+                        
+                        this.previousPan = {
+                            x: (e.touches[0].pageX + e.touches[1].pageX) / 2,
+                            y: (e.touches[0].pageY + e.touches[1].pageY) / 2
+                        };
                     } else if (e.touches.length === 1) {
                         // Setup Drag Rotate
                         this.previousTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
@@ -342,8 +363,8 @@ export class AREngine {
                         const scaleFactor = currentDistance / this.initialDistance;
                         const newScale = this.initialScale * scaleFactor;
                         
-                        // Limit scale (min 0.05, max 1.2) agar tidak terlalu kecil (hilang) atau memotong kamera
-                        const clampedScale = Math.max(0.05, Math.min(newScale, 1.2));
+                        // Limit scale diperlebar: 0.005 sampai 2.0 agar AR bisa zoom out
+                        const clampedScale = Math.max(0.005, Math.min(newScale, 2.0));
                         this.el.setAttribute('scale', `${clampedScale} ${clampedScale} ${clampedScale}`);
 
                         // Twist to Rotate Z (Miring)
@@ -356,15 +377,32 @@ export class AREngine {
                             z: this.initialZRot + angleDiff
                         });
                         
+                        // Pan (Geser 2 Jari)
+                        const currentPanX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
+                        const currentPanY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
+                        if (this.previousPan) {
+                            const panDeltaX = currentPanX - this.previousPan.x;
+                            const panDeltaY = currentPanY - this.previousPan.y;
+                            
+                            const currentPos = this.el.getAttribute('position');
+                            const panSensitivity = window.is2DModeLocal ? 0.02 : 0.005; // 2D mode butuh sensitivitas lebih tinggi karena jarak kamera jauh
+                            this.el.setAttribute('position', {
+                                x: currentPos.x + panDeltaX * panSensitivity,
+                                y: currentPos.y - panDeltaY * panSensitivity, // Y dibalik karena screen Y dari atas ke bawah
+                                z: currentPos.z
+                            });
+                        }
+                        this.previousPan = { x: currentPanX, y: currentPanY };
+                        
                     } else if (e.touches.length === 1 && this.previousTouch) {
-                        // Drag to Rotate X & Y (Lebih Halus: 0.2)
+                        // Drag to Rotate X & Y (Di-invert agar mengikuti arah jari)
                         const deltaX = e.touches[0].pageX - this.previousTouch.x;
                         const deltaY = e.touches[0].pageY - this.previousTouch.y;
                         
                         const rotation = this.el.getAttribute('rotation');
                         this.el.setAttribute('rotation', {
-                            x: rotation.x + deltaY * 0.2, 
-                            y: rotation.y + deltaX * 0.2,
+                            x: rotation.x - deltaY * 0.3, // invert (-)
+                            y: rotation.y - deltaX * 0.3, // invert (-)
                             z: rotation.z
                         });
                         

@@ -78,6 +78,13 @@ export class UIController {
         document.getElementById('btn-close-modal').addEventListener('click', () => {
             this.modalMarker.classList.add('hidden');
         });
+        
+        const btnResetView = document.getElementById('btn-reset-view');
+        if (btnResetView) {
+            btnResetView.addEventListener('click', () => {
+                window.dispatchEvent(new Event('resetView'));
+            });
+        }
     }
 
     toggleARMode(is2D) {
