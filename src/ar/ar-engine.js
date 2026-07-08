@@ -144,19 +144,18 @@ export class AREngine {
                 const animateEl = (elId, prop, to, duration = 800) => {
                     const el = document.getElementById(elId);
                     if (!el) return;
-                    AFRAME.ANIME({
-                        targets: el.getAttribute(prop),
-                        x: to.x !== undefined ? to.x : el.getAttribute(prop).x,
-                        y: to.y !== undefined ? to.y : el.getAttribute(prop).y,
-                        z: to.z !== undefined ? to.z : el.getAttribute(prop).z,
+                    const currentVals = el.getAttribute(prop) || {x:0, y:0, z:0};
+                    const animObj = { x: currentVals.x, y: currentVals.y, z: currentVals.z };
+                    
+                    anime({
+                        targets: animObj,
+                        x: to.x !== undefined ? to.x : currentVals.x,
+                        y: to.y !== undefined ? to.y : currentVals.y,
+                        z: to.z !== undefined ? to.z : currentVals.z,
                         duration: duration,
                         easing: 'easeOutExpo',
                         update: function() {
-                            el.setAttribute(prop, {
-                                x: this.targets[0].x,
-                                y: this.targets[0].y,
-                                z: this.targets[0].z
-                            });
+                            el.setAttribute(prop, animObj);
                         }
                     });
                 };
@@ -174,7 +173,7 @@ export class AREngine {
                                 node.material.needsUpdate = true;
                                 
                                 // Restore position
-                                AFRAME.ANIME({
+                                anime({
                                     targets: node.position,
                                     x: node.userData.originalPosition.x,
                                     y: node.userData.originalPosition.y,
@@ -268,7 +267,7 @@ export class AREngine {
                                     node.material.transparent = true;
                                     node.material.opacity = 0.2;
                                     
-                                    AFRAME.ANIME({
+                                    anime({
                                         targets: node.position,
                                         x: targetPos.x,
                                         y: targetPos.y,
@@ -278,7 +277,7 @@ export class AREngine {
                                     });
                                 } else {
                                     // Mesin diam
-                                    AFRAME.ANIME({
+                                    anime({
                                         targets: node.position,
                                         x: node.userData.originalPosition.x,
                                         y: node.userData.originalPosition.y,
@@ -350,7 +349,7 @@ export class AREngine {
                                 node.material.emissive = new THREE.Color(0x333333);
                                 node.material.needsUpdate = true;
                                 
-                                AFRAME.ANIME({
+                                anime({
                                     targets: node.position,
                                     x: node.userData.originalPosition.x,
                                     y: node.userData.originalPosition.y,
