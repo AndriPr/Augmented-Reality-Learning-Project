@@ -212,6 +212,9 @@ export class UIController {
             this.infoFunction.textContent = data.function;
             this.infoDesc.textContent = data.desc;
             
+            // Sembunyikan action bar agar layar lebih lega
+            this.actionBar.classList.add('hidden');
+            
             // Bersihkan step controller lama jika ada
             const oldStepCtrl = document.getElementById('step-controller');
             if(oldStepCtrl) oldStepCtrl.remove();
