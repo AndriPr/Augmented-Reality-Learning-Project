@@ -177,19 +177,24 @@
     padding: 10px 10px 15px 10px; /* Extra padding at bottom for phones */
     z-index: 200;
     pointer-events: auto;
-    transition: transform 0.4s ease;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .action-bar.hidden {
     transform: translateY(100%);
     opacity: 0;
+    pointer-events: none;
 }
 
-.action-bar.collapsed #buttons-container {
-    display: none;
-}
 .action-bar.collapsed {
     padding-bottom: 15px;
+}
+.action-bar.collapsed #buttons-container {
+    max-height: 0;
+    opacity: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+    margin-top: -10px; /* pull up slightly */
 }
 
 .action-title {
@@ -204,6 +209,9 @@
     overflow-x: auto;
     gap: 10px;
     padding-bottom: 5px;
+    max-height: 80px;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .buttons-horizontal-scroll::-webkit-scrollbar {
     height: 6px;
