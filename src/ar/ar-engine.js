@@ -35,9 +35,9 @@ export class AREngine {
                 <!-- TARGET 0: Model Utama -->
                 <a-entity id="target0" mindar-image-target="targetIndex: 0">
                     <!-- Container untuk Touch Controls (Scale & Rotation) -->
-                    <a-entity id="interactive-model" position="0 0 0" scale="0.05 0.05 0.05" rotation="0 0 0" touch-controller>
+                    <a-entity id="interactive-model" position="0 0 0" scale="0.2 0.2 0.2" rotation="0 0 0" touch-controller>
                         
-                        <!-- Model GLB Kompleks (Mobil Buggy) -->
+                        <!-- Model GLB Kompleks (Laptop PLN) -->
                         <a-entity 
                             id="gltf-main-model"
                             gltf-model="#model-complex" 
@@ -82,7 +82,7 @@ export class AREngine {
         const assetsEl = document.getElementById('ar-assets');
         const complexAsset = document.createElement('a-asset-item');
         complexAsset.setAttribute('id', 'model-complex');
-        complexAsset.setAttribute('src', '/assets/models/Buggy.glb');
+        complexAsset.setAttribute('src', '/assets/models/LAPTOP_PLN.glb');
         
         // Track asset loading
         complexAsset.addEventListener('loaded', () => {
