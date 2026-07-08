@@ -1,5 +1,5 @@
-import { UIController } from './ui/ui-controller.js?v=15';
-import { AREngine } from './ar/ar-engine.js?v=15';
+import { UIController } from './ui/ui-controller.js';
+import { AREngine } from './ar/ar-engine.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize UI first so loading screen works immediately
