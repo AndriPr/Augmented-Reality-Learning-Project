@@ -71,6 +71,13 @@ export class UIController {
                 this.toggleARMode(!this.is2DMode);
             });
         }
+        
+        document.getElementById('btn-download-marker').addEventListener('click', () => {
+            this.modalMarker.classList.remove('hidden');
+        });
+        document.getElementById('btn-close-modal').addEventListener('click', () => {
+            this.modalMarker.classList.add('hidden');
+        });
     }
 
     toggleARMode(is2D) {
@@ -88,14 +95,6 @@ export class UIController {
 
         // Beritahu sistem AR untuk beralih mode
         window.dispatchEvent(new CustomEvent('toggleARMode', { detail: this.is2DMode }));
-    }
-        
-        document.getElementById('btn-download-marker').addEventListener('click', () => {
-            this.modalMarker.classList.remove('hidden');
-        });
-        document.getElementById('btn-close-modal').addEventListener('click', () => {
-            this.modalMarker.classList.add('hidden');
-        });
     }
 
     updateLoadingProgress(percent, text) {
