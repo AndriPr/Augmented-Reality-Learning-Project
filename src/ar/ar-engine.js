@@ -227,22 +227,24 @@ export class AREngine {
                         // Mode 2D Viewer
                         if (video) video.style.display = 'none';
                         
-                        // Gunakan object3D.add untuk mencegah reload DOM A-Frame dan menghindari efek hidden dari target
+                        // Pindahkan ke kamera agar mengikuti layar
                         camera.object3D.add(modelContainer.object3D); 
                         modelContainer.object3D.visible = true;
                         
-                        modelContainer.object3D.position.set(0, -1, -5);
-                        modelContainer.object3D.scale.set(0.08, 0.08, 0.08);
-                        modelContainer.object3D.rotation.set(0, 0, 0);
+                        // Isometric Showcase (Lego-style) dan jauhi kamera (Z=-15) agar tidak nembus tembok
+                        modelContainer.setAttribute('position', '0 -2 -15');
+                        modelContainer.setAttribute('scale', '0.2 0.2 0.2');
+                        modelContainer.setAttribute('rotation', '25 -45 0');
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
                         
+                        // Kembalikan ke marker target
                         target.object3D.add(modelContainer.object3D);
                         
-                        modelContainer.object3D.position.set(0, 0, 0);
-                        modelContainer.object3D.scale.set(0.05, 0.05, 0.05);
-                        modelContainer.object3D.rotation.set(0, 0, 0);
+                        modelContainer.setAttribute('position', '0 0 0');
+                        modelContainer.setAttribute('scale', '0.05 0.05 0.05');
+                        modelContainer.setAttribute('rotation', '0 0 0');
                     }
                 });
 
@@ -340,8 +342,8 @@ export class AREngine {
                         const scaleFactor = currentDistance / this.initialDistance;
                         const newScale = this.initialScale * scaleFactor;
                         
-                        // Limit scale (min 0.01, max 0.8)
-                        const clampedScale = Math.max(0.01, Math.min(newScale, 0.8));
+                        // Limit scale (min 0.05, max 1.2) agar tidak terlalu kecil (hilang) atau memotong kamera
+                        const clampedScale = Math.max(0.05, Math.min(newScale, 1.2));
                         this.el.setAttribute('scale', `${clampedScale} ${clampedScale} ${clampedScale}`);
 
                         // Twist to Rotate Z (Miring)
