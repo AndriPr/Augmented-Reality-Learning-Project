@@ -12,10 +12,9 @@ export class AREngine {
 
         const container = document.getElementById('ar-container');
         
-        // Build the A-Frame scene dynamically to ensure clean state
         const sceneHTML = `
             <a-scene 
-                mindar-image="imageTargetSrc: /assets/targets/targets.mind; autoStart: true; filterMinCF: 0.001; filterBeta: 1000; missTolerance: 2;" 
+                mindar-image="imageTargetSrc: /assets/targets/targets.mind; autoStart: true;" 
                 color-space="sRGB" 
                 renderer="colorManagement: true, physicallyCorrectLights, antialias: true" 
                 vr-mode-ui="enabled: false" 
@@ -117,15 +116,30 @@ export class AREngine {
     }
 
     registerClickComponent() {
-        if(AFRAME.components['clickable-model']) return; // Prevent double registration
+        if(AFRAME.components['clickable-model']) return; 
 
         const self = this;
         AFRAME.registerComponent('clickable-model', {
             init: function () {
+                // Listener untuk mereset isolasi model
+                window.addEventListener('resetModelIsolation', () => {
+                    const mesh = this.el.getObject3D('mesh');
+                    if (mesh) {
+                        mesh.traverse((node) => {
+                            if (node.isMesh && node.userData.originalMaterial) {
+                                node.material.dispose(); // clean up cloned material
+                                node.material = node.userData.originalMaterial;
+                                node.userData.originalMaterial = null;
+                            }
+                        });
+                    }
+                });
+
                 this.el.addEventListener('click', (evt) => {
                     if (!evt.detail.intersection || !self.currentActiveTarget) return;
 
-                    let partName = evt.detail.intersection.object.name;
+                    const clickedMesh = evt.detail.intersection.object;
+                    let partName = clickedMesh.name;
                     const db = modelDatabase[self.currentActiveTarget];
                     
                     if (!partName || !db.parts[partName]) {
@@ -135,13 +149,41 @@ export class AREngine {
                         }
                     }
 
+                    // --- FITUR OBJEKTIFIKASI (ISOLATION MODE) ---
+                    const parentMesh = this.el.getObject3D('mesh');
+                    if (parentMesh) {
+                        parentMesh.traverse((node) => {
+                            if (node.isMesh) {
+                                // Clone material sekali saja agar tidak berbagi material dengan mesh lain
+                                if (!node.userData.originalMaterial) {
+                                    node.userData.originalMaterial = node.material;
+                                    node.material = node.material.clone();
+                                }
+                                
+                                if (node === clickedMesh) {
+                                    // Highlight mesh yang diklik
+                                    node.material.transparent = false;
+                                    node.material.opacity = 1;
+                                    // Menambahkan efek warna agar lebih mencolok (opsional)
+                                    node.material.emissive = new THREE.Color(0x333333); 
+                                } else {
+                                    // Bikin transparan (ghosting) mesh yang tidak diklik
+                                    node.material.transparent = true;
+                                    node.material.opacity = 0.15;
+                                    node.material.emissive = new THREE.Color(0x000000); 
+                                }
+                            }
+                        });
+                    }
+                    // ---------------------------------------------
+
                     if (partName && db.parts[partName]) {
                         self.ui.showInfoPanel(self.currentActiveTarget, partName);
                     } else {
-                        // Fallback jika bagian yang diklik belum ada di database
-                        self.ui.infoTitle.textContent = "Bagian: " + (partName || "Unknown");
-                        self.ui.infoFunction.textContent = "Informasi belum tersedia.";
-                        self.ui.infoDesc.textContent = "Bagian kompleks ini dapat Anda tambahkan ke database nanti.";
+                        // Fallback
+                        self.ui.infoTitle.textContent = "Komponen: " + (partName || "Unknown");
+                        self.ui.infoFunction.textContent = "Dipilih untuk dipelajari.";
+                        self.ui.infoDesc.textContent = "Anda sedang mengisolasi komponen ini dari keseluruhan mesin. Komponen lain disamarkan agar Anda bisa fokus.";
                         self.ui.infoPanel.classList.add('visible');
                     }
                 });

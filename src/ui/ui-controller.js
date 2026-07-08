@@ -78,9 +78,27 @@ export class UIController {
             this.infoTitle.textContent = data.title;
             this.infoFunction.textContent = data.function;
             this.infoDesc.textContent = data.desc;
-            this.infoPanel.classList.add('visible');
+        }
 
-            // Highlight active button
+        // Tampilkan tombol reset isolasi jika belum ada
+        let resetBtn = document.getElementById('btn-reset-isolation');
+        if (!resetBtn) {
+            resetBtn = document.createElement('button');
+            resetBtn.id = 'btn-reset-isolation';
+            resetBtn.className = 'btn-outline';
+            resetBtn.style.marginTop = '15px';
+            resetBtn.style.width = '100%';
+            resetBtn.textContent = 'Kembalikan Tampilan Penuh';
+            resetBtn.addEventListener('click', () => {
+                this.hideInfoPanel();
+            });
+            this.infoPanel.appendChild(resetBtn);
+        }
+
+        this.infoPanel.classList.add('visible');
+
+        // Highlight active button (if exists)
+        if (data) {
             const buttons = this.buttonsContainer.querySelectorAll('.btn-part');
             buttons.forEach(btn => {
                 if(btn.textContent === data.title) btn.classList.add('active');
@@ -92,5 +110,8 @@ export class UIController {
     hideInfoPanel() {
         this.infoPanel.classList.remove('visible');
         this.buttonsContainer.innerHTML = '';
+        
+        // Reset isolasi 3D model
+        window.dispatchEvent(new Event('resetModelIsolation'));
     }
 }
