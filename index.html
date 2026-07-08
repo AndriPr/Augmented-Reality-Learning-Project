@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Learning Application</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- A-Frame and MindAR Libraries -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</head>
+<body>
+
+    <!-- UI Layer -->
+    <div id="ui-container">
+        <!-- Header -->
+        <div class="app-header">
+            Modul Pembelajaran Interaktif AR
+        </div>
+
+        <!-- Scanning Indicator -->
+        <div id="scan-indicator" class="scan-indicator">
+            Arahkan kamera ke target gambar
+        </div>
+
+        <!-- Info Panel (Glassmorphism) -->
+        <div id="info-panel" class="glass-panel">
+            <div class="info-box">
+                <h2 id="info-title" class="info-title">Pilih Komponen</h2>
+                <div id="info-function" class="info-function">Silakan klik tombol atau sentuh model</div>
+                <p id="info-desc" class="info-desc">Arahkan kamera Anda pada marker, lalu tekan bagian 3D model untuk melihat deskripsinya.</p>
+            </div>
+            
+            <!-- Quick Navigation Buttons -->
+            <div class="button-container">
+                <button class="part-btn" data-part="part1">Bagian 1</button>
+                <button class="part-btn" data-part="part2">Bagian 2</button>
+                <button class="part-btn" data-part="part3">Bagian 3</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- A-Frame Scene for MindAR dengan Parameter Optimasi -->
+    <a-scene 
+        mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 10;" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights, antialias: true, logarithmicDepthBuffer: true" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false"
+        cursor="rayOrigin: mouse"
+        raycaster="objects: .clickable">
+
+        <a-assets>
+            <!-- GANTI src ini dengan lokasi file .glb Anda sendiri, cth: ./assets/models/model.glb -->
+            <a-asset-item id="my-model" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/custom/models/raccoon/scene.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- Image Target -->
+        <a-entity id="target-image" mindar-image-target="targetIndex: 0">
+            <!-- 3D Model yang muncul di atas target gambar -->
+            <a-entity 
+                gltf-model="#my-model" 
+                position="0 0 0" 
+                scale="0.1 0.1 0.1" 
+                rotation="0 0 0" 
+                class="clickable"
+                clickable-model>
+            </a-entity>
+        </a-entity>
+
+    </a-scene>
+
+</body>
+</html>
