@@ -17,6 +17,12 @@ export class UIController {
         this.infoFunction = document.getElementById('info-function');
         this.infoDesc = document.getElementById('info-desc');
         this.buttonsContainer = document.getElementById('buttons-container');
+        this.btnDownload = document.getElementById('btn-download-marker');
+        this.btnToggleMode = document.getElementById('btn-toggle-mode');
+        this.virtualBg = document.getElementById('virtual-bg');
+
+        // State UI
+        this.is2DMode = false;
 
         this.modalMarker = document.getElementById('modal-marker');
         
@@ -24,6 +30,30 @@ export class UIController {
     }
 
     initEvents() {
+        // Binding Actions
+        this.btnDownload.addEventListener('click', () => {
+            window.open('/assets/targets/card.png', '_blank');
+        });
+
+        if (this.btnToggleMode) {
+            this.btnToggleMode.addEventListener('click', () => {
+                this.is2DMode = !this.is2DMode;
+                
+                // Update Button UI
+                this.btnToggleMode.textContent = this.is2DMode ? 'Mode: 2D' : 'Mode: AR';
+                
+                // Update Virtual BG
+                if (this.is2DMode) {
+                    this.virtualBg.classList.remove('hidden');
+                } else {
+                    this.virtualBg.classList.add('hidden');
+                }
+
+                // Beritahu sistem AR untuk beralih mode
+                window.dispatchEvent(new CustomEvent('toggleARMode', { detail: this.is2DMode }));
+            });
+        }
+        
         document.getElementById('btn-download-marker').addEventListener('click', () => {
             this.modalMarker.classList.remove('hidden');
         });

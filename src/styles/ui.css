@@ -25,8 +25,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 16px;
     padding: 12px 20px;
-    animation: slideDown 0.5s ease-out;
+    margin-bottom: 20px;
+    pointer-events: auto; /* Allow clicking buttons */
 }
 
 .header-content {
@@ -34,6 +36,12 @@
     align-items: center;
     gap: 10px;
     font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .pulse-dot {
@@ -58,6 +66,27 @@
 }
 .btn-glass:hover {
     background: rgba(255,255,255,0.2);
+}
+.btn-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Virtual Background for 2D Mode */
+.virtual-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    z-index: -1; /* Behind AR container */
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.virtual-bg.hidden {
+    opacity: 0;
 }
 
 /* Info Panel */

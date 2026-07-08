@@ -249,6 +249,31 @@ export class AREngine {
                     });
                 });
 
+                // Listener Toggle AR/2D Mode
+                window.addEventListener('toggleARMode', (e) => {
+                    const is2D = e.detail;
+                    const modelContainer = document.getElementById('interactive-model');
+                    const camera = document.querySelector('a-camera');
+                    const target = document.getElementById('target0');
+                    const video = document.querySelector('video');
+
+                    if (is2D) {
+                        // Mode 2D Viewer
+                        if (video) video.style.display = 'none';
+                        camera.appendChild(modelContainer); // Pindah ke layar
+                        modelContainer.setAttribute('position', '0 -0.5 -3');
+                        modelContainer.setAttribute('scale', '0.05 0.05 0.05');
+                        modelContainer.setAttribute('rotation', '0 0 0');
+                    } else {
+                        // Mode AR
+                        if (video) video.style.display = 'block';
+                        target.appendChild(modelContainer); // Kembali menempel ke logo
+                        modelContainer.setAttribute('position', '0 0 0');
+                        modelContainer.setAttribute('scale', '0.05 0.05 0.05');
+                        modelContainer.setAttribute('rotation', '0 0 0');
+                    }
+                });
+
                 this.el.addEventListener('click', (evt) => {
                     if (!evt.detail.intersection || !self.currentActiveTarget) return;
 
@@ -312,17 +337,21 @@ export class AREngine {
             init: function () {
                 this.initialScale = this.el.object3D.scale.x;
                 this.initialDistance = 0;
+                this.initialAngle = 0;
+                this.initialZRot = 0;
                 this.previousTouch = null;
 
                 const sceneEl = document.querySelector('a-scene');
 
                 sceneEl.addEventListener('touchstart', (e) => {
                     if (e.touches.length === 2) {
-                        // Setup Pinch
+                        // Setup Pinch & Twist
                         const dx = e.touches[0].pageX - e.touches[1].pageX;
                         const dy = e.touches[0].pageY - e.touches[1].pageY;
                         this.initialDistance = Math.hypot(dx, dy);
                         this.initialScale = this.el.object3D.scale.x;
+                        this.initialAngle = Math.atan2(dy, dx);
+                        this.initialZRot = this.el.getAttribute('rotation').z;
                     } else if (e.touches.length === 1) {
                         // Setup Drag Rotate
                         this.previousTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
@@ -339,19 +368,29 @@ export class AREngine {
                         const scaleFactor = currentDistance / this.initialDistance;
                         const newScale = this.initialScale * scaleFactor;
                         
-                        // Limit scale (min 0.01, max 0.5 for Buggy)
-                        const clampedScale = Math.max(0.01, Math.min(newScale, 0.5));
+                        // Limit scale (min 0.01, max 0.8)
+                        const clampedScale = Math.max(0.01, Math.min(newScale, 0.8));
                         this.el.setAttribute('scale', `${clampedScale} ${clampedScale} ${clampedScale}`);
+
+                        // Twist to Rotate Z (Miring)
+                        const currentAngle = Math.atan2(dy, dx);
+                        const angleDiff = (currentAngle - this.initialAngle) * (180 / Math.PI); 
+                        const currentRot = this.el.getAttribute('rotation');
+                        this.el.setAttribute('rotation', {
+                            x: currentRot.x,
+                            y: currentRot.y,
+                            z: this.initialZRot + angleDiff
+                        });
                         
                     } else if (e.touches.length === 1 && this.previousTouch) {
-                        // Drag to Rotate
+                        // Drag to Rotate X & Y (Lebih Halus: 0.2)
                         const deltaX = e.touches[0].pageX - this.previousTouch.x;
                         const deltaY = e.touches[0].pageY - this.previousTouch.y;
                         
                         const rotation = this.el.getAttribute('rotation');
                         this.el.setAttribute('rotation', {
-                            x: rotation.x + deltaY * 0.5, // FIX: Dragging up now rotates up
-                            y: rotation.y + deltaX * 0.5,
+                            x: rotation.x + deltaY * 0.2, 
+                            y: rotation.y + deltaX * 0.2,
                             z: rotation.z
                         });
                         

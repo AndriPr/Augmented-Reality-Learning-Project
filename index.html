@@ -35,6 +35,9 @@
         </div>
     </div>
 
+    <!-- Virtual Background for 2D Mode -->
+    <div id="virtual-bg" class="virtual-bg hidden"></div>
+
     <!-- UI Overlay (Glassmorphism) -->
     <div id="ui-layer" class="ui-layer hidden">
         <header class="glass-header">
@@ -42,7 +45,10 @@
                 <span class="pulse-dot"></span>
                 <span id="status-text">Mencari Marker...</span>
             </div>
-            <button id="btn-download-marker" class="btn-glass">Unduh Marker</button>
+            <div class="header-actions">
+                <button id="btn-toggle-mode" class="btn-glass active">Mode: AR</button>
+                <button id="btn-download-marker" class="btn-glass">Marker</button>
+            </div>
         </header>
 
         <!-- Static Action Bar (Daftar Interaktif) -->
