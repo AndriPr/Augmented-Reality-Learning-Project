@@ -66,10 +66,15 @@
     transition: all 0.2s ease;
 }
 .btn-glass:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.btn-glass:active {
+    transform: scale(0.92);
 }
 .btn-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* Virtual Background for 2D Mode */
@@ -217,13 +222,22 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.8rem;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     white-space: nowrap;
+}
+.btn-part:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+}
+.btn-part:active {
+    transform: scale(0.92);
 }
 .btn-part.active {
     background: var(--pln-blue);
     border-color: var(--pln-blue);
-    box-shadow: 0 4px 15px rgba(0,162,233,0.4);
+    box-shadow: 0 4px 15px rgba(0,162,233,0.5);
+    transform: scale(1.05);
+    animation: activePulse 2s infinite alternate;
 }
 
 /* Modal */
@@ -257,6 +271,14 @@
     padding: 12px;
     border-radius: 8px;
     font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(0,162,233,0.5);
+    transform: translateY(-2px);
+}
+.btn-primary:active {
+    transform: scale(0.95);
 }
 .btn-outline {
     background: transparent;
@@ -265,6 +287,15 @@
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-outline:hover {
+    background: rgba(255, 59, 48, 0.15);
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.3);
+    transform: translateY(-2px);
+}
+.btn-outline:active {
+    transform: scale(0.95);
 }
 
 @keyframes slideDown {
@@ -274,4 +305,8 @@
 @keyframes blink {
     from { opacity: 0.4; }
     to { opacity: 1; }
+}
+@keyframes activePulse {
+    from { box-shadow: 0 4px 15px rgba(0,162,233,0.4); }
+    to { box-shadow: 0 4px 25px rgba(0,162,233,0.8); }
 }
