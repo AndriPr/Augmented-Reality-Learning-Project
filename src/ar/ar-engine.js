@@ -230,6 +230,51 @@ export class AREngine {
                     
                     if(toolsContainer) toolsContainer.setAttribute('visible', 'true');
                     
+                    // --- ANIMASI HOLOGRAM TOOLS (Dieksekusi sekali, di LUAR traverse loop) ---
+                    if (step === 0) {
+                        if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                        if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                    }
+                    else if (step === 1) {
+                        if (kunciPas) {
+                            kunciPas.setAttribute('visible', 'true');
+                            kunciPas.setAttribute('position', '0 25 -12'); 
+                            kunciPas.setAttribute('rotation', '0 0 0');
+                            
+                            animateEl('kunci-pas', 'position', {x: 0, y: 15, z: -12}, 800);
+                            setTimeout(() => {
+                                animateEl('kunci-pas', 'rotation', {x: 0, y: 1080, z: 0}, 1500);
+                            }, 800);
+                        }
+                        if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                    }
+                    else if (step === 2) {
+                        if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                        if (tabungOli) {
+                            tabungOli.setAttribute('visible', 'true');
+                            tabungOli.setAttribute('position', '0 30 -12');
+                            tabungOli.setAttribute('rotation', '0 0 0');
+                            
+                            animateEl('tabung-oli', 'position', {x: 0, y: 20, z: -12}, 800);
+                            setTimeout(() => {
+                                animateEl('tabung-oli', 'rotation', {x: 0, y: 0, z: -45}, 500);
+                                setTimeout(() => {
+                                    if (tetesanOli) {
+                                        tetesanOli.setAttribute('visible', 'true');
+                                        tetesanOli.setAttribute('position', '0 -1 0');
+                                        animateEl('tetesan-oli', 'position', {x: 0, y: -10, z: 0}, 1000);
+                                    }
+                                }, 600);
+                            }, 800);
+                        }
+                    }
+                    else if (step === 3) {
+                        if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                        if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                        if (tetesanOli) tetesanOli.setAttribute('visible', 'false');
+                    }
+                    // -------------------------------------------------------------
+
                     parentMesh.traverse((node) => {
                         if (node.isMesh) {
                             if (!node.userData.originalMaterial) {
@@ -248,17 +293,12 @@ export class AREngine {
                             const isMesin = localCenter.z < -8 && localCenter.y < 20;
                             
                             if (step === 0) {
-                                // Langkah 1: Buka Akses Mesin (Casis luar meledak/menjauh)
-                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
-                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
-                                
                                 node.material.transparent = false;
                                 node.material.opacity = 1;
                                 node.material.emissive = new THREE.Color(0x333333);
                                 node.material.needsUpdate = true;
                                 
                                 if (!isMesin) {
-                                    // Casis menjauh
                                     const dir = new THREE.Vector3().copy(localCenter).normalize();
                                     if (dir.lengthSq() < 0.001) dir.set(0, 1, 0);
                                     const explodeDist = 50; 
@@ -276,7 +316,6 @@ export class AREngine {
                                         easing: 'easeOutExpo'
                                     });
                                 } else {
-                                    // Mesin diam
                                     anime({
                                         targets: node.position,
                                         x: node.userData.originalPosition.x,
@@ -288,62 +327,29 @@ export class AREngine {
                                 }
                             } 
                             else if (step === 1) {
-                                // Langkah 2: Kunci Pas Buka Baut
-                                if (kunciPas) {
-                                    kunciPas.setAttribute('visible', 'true');
-                                    kunciPas.setAttribute('position', '0 25 -12'); // Posisi awal melayang atas
-                                    kunciPas.setAttribute('rotation', '0 0 0');
-                                    
-                                    // Animasi Turun lalu Muter
-                                    animateEl('kunci-pas', 'position', {x: 0, y: 15, z: -12}, 800);
+                                if (!isMesin) {
+                                    node.material.transparent = true;
+                                    node.material.opacity = 0.1;
+                                } else {
+                                    // Beri jeda agar menyala ketika kunci pas mulai memutar (1 detik kemudian)
                                     setTimeout(() => {
-                                        // Putar 3x (360 * 3)
-                                        animateEl('kunci-pas', 'rotation', {x: 0, y: 1080, z: 0}, 1500);
-                                        // Highlight mesin kuning saat diputar
-                                        if (isMesin) {
-                                            node.material.emissive = new THREE.Color(0xaaaa00);
-                                            node.material.needsUpdate = true;
-                                        }
-                                    }, 800);
+                                        node.material.transparent = false;
+                                        node.material.opacity = 1;
+                                        node.material.emissive = new THREE.Color(0xaaaa00);
+                                        node.material.needsUpdate = true;
+                                    }, 1000);
                                 }
-                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
                             }
                             else if (step === 2) {
-                                // Langkah 3: Tuang Oli Baru
-                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
-                                if (tabungOli) {
-                                    tabungOli.setAttribute('visible', 'true');
-                                    tabungOli.setAttribute('position', '0 30 -12');
-                                    tabungOli.setAttribute('rotation', '0 0 0');
-                                    
-                                    // Animasi Turun -> Miring -> Netes
-                                    animateEl('tabung-oli', 'position', {x: 0, y: 20, z: -12}, 800);
+                                if (isMesin) {
+                                    // Beri jeda menyala hijau ketika oli menetes
                                     setTimeout(() => {
-                                        animateEl('tabung-oli', 'rotation', {x: 0, y: 0, z: -45}, 500);
-                                        
-                                        // Tetesan oli turun
-                                        setTimeout(() => {
-                                            if (tetesanOli) {
-                                                tetesanOli.setAttribute('visible', 'true');
-                                                tetesanOli.setAttribute('position', '0 -1 0');
-                                                animateEl('tetesan-oli', 'position', {x: 0, y: -10, z: 0}, 1000);
-                                            }
-                                            // Highlight mesin jadi hijau (berhasil isi)
-                                            if (isMesin) {
-                                                node.material.emissive = new THREE.Color(0x00aa00);
-                                                node.material.needsUpdate = true;
-                                            }
-                                        }, 600);
-                                        
-                                    }, 800);
+                                        node.material.emissive = new THREE.Color(0x00aa00);
+                                        node.material.needsUpdate = true;
+                                    }, 1400);
                                 }
                             }
                             else if (step === 3) {
-                                // Langkah 4: Perakitan Kembali
-                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
-                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
-                                if (tetesanOli) tetesanOli.setAttribute('visible', 'false');
-                                
                                 node.material.transparent = false;
                                 node.material.opacity = 1;
                                 node.material.emissive = new THREE.Color(0x333333);
