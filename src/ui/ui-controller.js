@@ -156,10 +156,10 @@ export class UIController {
         const db = modelDatabase[targetId];
         if(!db) return;
 
-        // Tambahkan tombol Keseluruhan (Reset) di awal
+        // Tambahkan tombol Keseluruhan (Tampilan Default) di awal
         const btnAll = document.createElement('button');
         btnAll.className = 'btn-part active';
-        btnAll.textContent = 'Semua (Keseluruhan)';
+        btnAll.textContent = 'Tampilan Default';
         let resetIsAnimating = false;
         btnAll.addEventListener('click', () => {
             if (resetIsAnimating) return;
@@ -176,39 +176,112 @@ export class UIController {
         });
         this.buttonsContainer.appendChild(btnAll);
 
-        Object.keys(db.parts).forEach(partKey => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-part';
-            btn.textContent = db.parts[partKey].title;
-            
-            // Spam-click protection (debounce)
-            let isAnimating = false;
-            
-            btn.addEventListener('click', () => {
-                if (isAnimating) return;
+        if(db.modes) {
+            Object.keys(db.modes).forEach(modeKey => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-part';
+                btn.textContent = db.modes[modeKey].title;
                 
-                // Block clicks for 1 second (animation duration + buffer)
-                isAnimating = true;
-                setTimeout(() => { isAnimating = false; }, 1000);
+                // Spam-click protection (debounce)
+                let isAnimating = false;
                 
-                this.showInfoPanel(targetId, partKey);
-                window.dispatchEvent(new CustomEvent('isolatePart', { detail: partKey }));
-                
-                // Highlight active button (Reset All disilang)
-                const buttons = this.buttonsContainer.querySelectorAll('.btn-part');
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                btn.addEventListener('click', () => {
+                    if (isAnimating) return;
+                    
+                    // Block clicks for 1 second (animation duration + buffer)
+                    isAnimating = true;
+                    setTimeout(() => { isAnimating = false; }, 1000);
+                    
+                    this.showInfoPanel(targetId, modeKey);
+                    window.dispatchEvent(new CustomEvent('changeMode', { detail: modeKey }));
+                    
+                    // Highlight active button
+                    const buttons = this.buttonsContainer.querySelectorAll('.btn-part');
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+                this.buttonsContainer.appendChild(btn);
             });
-            this.buttonsContainer.appendChild(btn);
-        });
+        }
     }
 
-    showInfoPanel(targetId, partKey) {
-        const data = modelDatabase[targetId]?.parts[partKey];
+    showInfoPanel(targetId, modeKey) {
+        const data = modelDatabase[targetId]?.modes[modeKey];
         if (data) {
             this.infoTitle.textContent = data.title;
             this.infoFunction.textContent = data.function;
             this.infoDesc.textContent = data.desc;
+            
+            // Bersihkan step controller lama jika ada
+            const oldStepCtrl = document.getElementById('step-controller');
+            if(oldStepCtrl) oldStepCtrl.remove();
+
+            // Jika mode maintenance, tambahkan tombol Next/Prev
+            if (modeKey === 'maintenance' && data.steps) {
+                let currentStep = 0;
+                
+                const stepCtrl = document.createElement('div');
+                stepCtrl.id = 'step-controller';
+                stepCtrl.style.marginTop = '15px';
+                stepCtrl.style.display = 'flex';
+                stepCtrl.style.justifyContent = 'space-between';
+                stepCtrl.style.alignItems = 'center';
+                
+                const btnPrev = document.createElement('button');
+                btnPrev.className = 'btn-outline';
+                btnPrev.textContent = 'Sebelumnya';
+                btnPrev.style.padding = '8px 12px';
+                btnPrev.disabled = true;
+                
+                const stepText = document.createElement('span');
+                stepText.style.color = '#fff';
+                stepText.style.fontWeight = 'bold';
+                stepText.textContent = `Langkah 1 / ${data.steps.length}`;
+                
+                const btnNext = document.createElement('button');
+                btnNext.className = 'btn-primary';
+                btnNext.textContent = 'Selanjutnya';
+                btnNext.style.padding = '8px 12px';
+                
+                const updateStepUI = () => {
+                    // Update Text
+                    const stepData = data.steps[currentStep];
+                    this.infoFunction.textContent = stepData.title;
+                    this.infoDesc.textContent = stepData.instruction;
+                    stepText.textContent = `Langkah ${currentStep + 1} / ${data.steps.length}`;
+                    
+                    // Update Buttons
+                    btnPrev.disabled = currentStep === 0;
+                    btnNext.disabled = currentStep === data.steps.length - 1;
+                    
+                    // Trigger AR Animation for this step
+                    window.dispatchEvent(new CustomEvent('maintenanceStep', { detail: currentStep }));
+                };
+                
+                btnPrev.addEventListener('click', () => {
+                    if (currentStep > 0) {
+                        currentStep--;
+                        updateStepUI();
+                    }
+                });
+                
+                btnNext.addEventListener('click', () => {
+                    if (currentStep < data.steps.length - 1) {
+                        currentStep++;
+                        updateStepUI();
+                    }
+                });
+                
+                stepCtrl.appendChild(btnPrev);
+                stepCtrl.appendChild(stepText);
+                stepCtrl.appendChild(btnNext);
+                
+                // Sisipkan sebelum tombol reset
+                this.infoPanel.appendChild(stepCtrl);
+                
+                // Initialize step 1
+                updateStepUI();
+            }
         }
 
         // Tampilkan tombol reset isolasi jika belum ada
@@ -219,7 +292,7 @@ export class UIController {
             resetBtn.className = 'btn-outline';
             resetBtn.style.marginTop = '15px';
             resetBtn.style.width = '100%';
-            resetBtn.textContent = 'Kembalikan Tampilan Penuh';
+            resetBtn.textContent = 'Tutup Panel';
             
             let isResetAnimating = false;
             resetBtn.addEventListener('click', () => {
@@ -229,6 +302,9 @@ export class UIController {
                 
                 this.hideInfoPanel();
             });
+            this.infoPanel.appendChild(resetBtn);
+        } else {
+            // Pindahkan reset btn ke paling bawah
             this.infoPanel.appendChild(resetBtn);
         }
 

@@ -35,20 +35,33 @@ export class AREngine {
                 <!-- TARGET 0: Model Utama -->
                 <a-entity id="target0" mindar-image-target="targetIndex: 0">
                     <!-- Container untuk Touch Controls (Scale & Rotation) -->
-                    <a-entity id="interactive-model" position="0 0 0" scale="0.05 0.05 0.05" rotation="0 0 0" touch-controller>
-                        
-                        <!-- HOTSPOTS Removed (We now strictly use the UI for isolation) -->
-
-                        <!-- Model GLB Kompleks (Mobil Buggy) -->
-                        <a-entity 
-                            id="gltf-main-model"
-                            gltf-model="#model-complex" 
-                            position="0 0 0" rotation="0 0 0" 
-                            class="clickable" clickable-model>
+                    <a-entity id="interactive-model" position="0 0 0" scale="0.2 0.2 0.2" rotation="0 0 0" touch-controller>
+                        <!-- Laptop Mockup (Placeholder until GLB is provided) -->
+                        <a-entity id="laptop-mockup" position="0 0 0">
+                            <!-- Layar Laptop -->
+                            <a-box id="layar" position="0 2 -1.5" scale="3.5 2.2 0.1" color="#1a1a1a" rotation="-15 0 0">
+                                <!-- Screen Display -->
+                                <a-plane position="0 0 0.51" width="3.3" height="2" color="#00A2E9"></a-plane>
+                            </a-box>
+                            
+                            <!-- Base Laptop (Keyboard area) -->
+                            <a-box id="base" position="0 0.5 -0.5" scale="3.5 0.2 2.5" color="#333333">
+                                <!-- Keyboard -->
+                                <a-plane position="0 0.51 0" rotation="-90 0 0" width="3.2" height="1.4" color="#111"></a-plane>
+                            </a-box>
+                            
+                            <!-- Casing Bawah -->
+                            <a-box id="casing_bawah" position="0 0.3 -0.5" scale="3.5 0.1 2.5" color="#222222"></a-box>
+                            
+                            <!-- RAM Lama -->
+                            <a-box id="ram_lama" position="0 0.35 -0.5" scale="0.8 0.05 0.3" color="#228B22"></a-box>
+                            
+                            <!-- RAM Baru (Hidden initially) -->
+                            <a-box id="ram_baru" position="2 0.35 -0.5" scale="0.8 0.05 0.3" color="#FACC15" visible="false"></a-box>
                         </a-entity>
                         
                         <!-- Drop Shadow Fake untuk 2D Showcase -->
-                        <a-circle id="drop-shadow" rotation="-90 0 0" position="0 -3 0" radius="18" color="#000000" opacity="0" material="shader: flat; transparent: true;"></a-circle>
+                        <a-circle id="drop-shadow" rotation="-90 0 0" position="0 -0.1 0" radius="3" color="#000000" opacity="0" material="shader: flat; transparent: true;"></a-circle>
                     </a-entity>
                 </a-entity>
 
@@ -121,100 +134,95 @@ export class AREngine {
         const self = this;
         AFRAME.registerComponent('clickable-model', {
             init: function () {
-                // Listener untuk mereset isolasi model
+                // Fungsi utilitas animasi A-Frame
+                const animateEl = (elId, prop, to, duration = 800) => {
+                    const el = document.getElementById(elId);
+                    if (!el) return;
+                    AFRAME.ANIME({
+                        targets: el.getAttribute(prop),
+                        x: to.x !== undefined ? to.x : el.getAttribute(prop).x,
+                        y: to.y !== undefined ? to.y : el.getAttribute(prop).y,
+                        z: to.z !== undefined ? to.z : el.getAttribute(prop).z,
+                        duration: duration,
+                        easing: 'easeOutExpo',
+                        update: function() {
+                            el.setAttribute(prop, {
+                                x: this.targets[0].x,
+                                y: this.targets[0].y,
+                                z: this.targets[0].z
+                            });
+                        }
+                    });
+                };
+
+                // Reset semua posisi laptop ke awal
                 window.addEventListener('resetModelIsolation', () => {
-                    const mesh = this.el.getObject3D('mesh');
-                    if (mesh) {
-                        mesh.traverse((node) => {
-                            if (node.isMesh && node.userData.originalMaterial) {
-                                node.material.dispose(); // clean up cloned material
-                                node.material = node.userData.originalMaterial;
-                                node.userData.originalMaterial = null;
-                            }
-                            
-                            // Animasi kembali ke posisi semula
-                            if (node.isMesh && node.userData.originalPosition) {
-                                AFRAME.ANIME({
-                                    targets: node.position,
-                                    x: node.userData.originalPosition.x,
-                                    y: node.userData.originalPosition.y,
-                                    z: node.userData.originalPosition.z,
-                                    duration: 800,
-                                    easing: 'easeOutElastic(1, .8)'
-                                });
-                            }
-                        });
+                    animateEl('casing_bawah', 'position', {x: 0, y: 0.3, z: -0.5});
+                    animateEl('ram_lama', 'position', {x: 0, y: 0.35, z: -0.5});
+                    animateEl('ram_lama', 'rotation', {x: 0, y: 0, z: 0});
+                    
+                    const ramBaru = document.getElementById('ram_baru');
+                    if(ramBaru) ramBaru.setAttribute('visible', 'false');
+                    
+                    const layar = document.getElementById('layar');
+                    if(layar) layar.setAttribute('color', '#1a1a1a'); // Reset warna layar
+                });
+
+                // Listener Mode Berubah
+                window.addEventListener('changeMode', (e) => {
+                    const mode = e.detail;
+                    window.dispatchEvent(new Event('resetModelIsolation'));
+                    
+                    if(mode === 'health') {
+                        // Simulasi thermal (warna layar merah/kuning)
+                        const layar = document.getElementById('layar');
+                        if(layar) layar.setAttribute('color', '#aa2222');
                     }
                 });
 
-                // Listener ketika tombol di Action Bar UI diklik
-                window.addEventListener('isolatePart', (e) => {
-                    const partKey = e.detail; // e.g., 'ban', 'casis', 'mesin'
+                // Listener untuk Langkah Maintenance
+                window.addEventListener('maintenanceStep', (e) => {
+                    const step = e.detail;
                     
-                    const parentMesh = this.el.getObject3D('mesh');
-                    if (parentMesh) {
-                        parentMesh.traverse((node) => {
-                            if (node.isMesh) {
-                                // Simpan state original
-                                if (!node.userData.originalMaterial) {
-                                    node.userData.originalMaterial = node.material;
-                                    node.material = node.material.clone();
-                                }
-                                if (!node.userData.originalPosition) {
-                                    node.userData.originalPosition = node.position.clone();
-                                }
-                                
-                                // Deteksi posisi spasial komponen (karena nama mesh generik)
-                                const box = new THREE.Box3().setFromObject(node);
-                                const worldCenter = new THREE.Vector3();
-                                box.getCenter(worldCenter);
-                                const localCenter = parentMesh.worldToLocal(worldCenter.clone());
-                                
-                                // Klasifikasi heuristik sederhana
-                                let meshPart = 'casis';
-                                if (localCenter.y < 12 && Math.abs(localCenter.x) > 8) meshPart = 'ban';
-                                else if (localCenter.z < -8 && localCenter.y < 20) meshPart = 'mesin';
-
-                                if (meshPart === partKey) {
-                                    // Ini part yang dipilih! Biarkan solid dan kembali ke posisinya.
-                                    node.material.transparent = false;
-                                    node.material.opacity = 1;
-                                    node.material.emissive = new THREE.Color(0x333333); 
-                                    node.material.needsUpdate = true; // FIX: Wajib di Three.js jika mengubah transparent
-                                    
-                                    AFRAME.ANIME({
-                                        targets: node.position,
-                                        x: node.userData.originalPosition.x,
-                                        y: node.userData.originalPosition.y,
-                                        z: node.userData.originalPosition.z,
-                                        duration: 800,
-                                        easing: 'easeOutElastic(1, .8)'
-                                    });
-                                } else {
-                                    // Ini part lain! Bikin transparan dan EXPLODE (Bongkar spt Lego)
-                                    node.material.transparent = true;
-                                    node.material.opacity = 0.2;
-                                    node.material.emissive = new THREE.Color(0x000000); 
-                                    node.material.needsUpdate = true; // FIX: Wajib di Three.js jika mengubah transparent
-                                    
-                                    // Hitung arah ledakan menjauh dari origin parent menggunakan koordinat tengah geometri
-                                    const dir = new THREE.Vector3().copy(localCenter).normalize();
-                                    if (dir.lengthSq() < 0.001) dir.set(0, 1, 0); // Cegah NaN jika di origin
-                                    
-                                    const explodeDist = 50; // Jarak bongkar yang lebih dramatis
-                                    const targetPos = node.userData.originalPosition.clone().add(dir.multiplyScalar(explodeDist));
-                                    
-                                    AFRAME.ANIME({
-                                        targets: node.position,
-                                        x: targetPos.x,
-                                        y: targetPos.y,
-                                        z: targetPos.z,
-                                        duration: 800,
-                                        easing: 'easeOutExpo'
-                                    });
-                                }
+                    if (step === 0) {
+                        // Langkah 1: Buka Casing Bawah (geser ke bawah/menjauh)
+                        animateEl('casing_bawah', 'position', {y: -1.5, z: -0.5});
+                        animateEl('ram_lama', 'position', {x: 0, y: 0.35, z: -0.5});
+                        document.getElementById('ram_baru').setAttribute('visible', 'false');
+                    } 
+                    else if (step === 1) {
+                        // Langkah 2: Lepas RAM Lama
+                        animateEl('casing_bawah', 'position', {y: -1.5, z: -0.5}); // Pastikan casing terbuka
+                        
+                        // RAM miring lalu tercabut ke atas
+                        const ramLama = document.getElementById('ram_lama');
+                        AFRAME.ANIME({
+                            targets: ramLama.getAttribute('rotation'),
+                            x: 30, // miring 30 derajat
+                            duration: 400,
+                            easing: 'easeOutExpo',
+                            update: function() { ramLama.setAttribute('rotation', {x: this.targets[0].x, y: 0, z: 0}); },
+                            complete: () => {
+                                animateEl('ram_lama', 'position', {y: 1.5, z: 1.5}); // tercabut
                             }
                         });
+                        document.getElementById('ram_baru').setAttribute('visible', 'false');
+                    }
+                    else if (step === 2) {
+                        // Langkah 3: Pasang RAM Baru
+                        animateEl('casing_bawah', 'position', {y: -1.5, z: -0.5});
+                        animateEl('ram_lama', 'position', {x: 5, y: 1.5, z: 1.5}); // RAM lama dijauhkan
+                        
+                        const ramBaru = document.getElementById('ram_baru');
+                        ramBaru.setAttribute('visible', 'true');
+                        ramBaru.setAttribute('position', '0 1.5 1.5');
+                        ramBaru.setAttribute('rotation', '30 0 0'); // mulai dari posisi miring
+                        
+                        // Animasi masuk
+                        animateEl('ram_baru', 'position', {x: 0, y: 0.35, z: -0.5}, 600);
+                        setTimeout(() => {
+                            animateEl('ram_baru', 'rotation', {x: 0, y: 0, z: 0}, 300); // ditekan ke bawah
+                        }, 600);
                     }
                 });
 
