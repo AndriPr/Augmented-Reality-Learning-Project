@@ -63,7 +63,7 @@
 /* Info Panel */
 .glass-panel {
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 120px;
     transform: translateY(100%);
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -106,16 +106,25 @@
     line-height: 1.4;
 }
 
-/* Action Bar */
+/* Fixed Footer Action Bar */
 .action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 15px;
-    margin-bottom: 20px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--glass-border);
+    padding: 15px 15px 25px 15px; /* Extra padding at bottom for phones */
+    z-index: 200;
     pointer-events: auto;
+    transition: transform 0.4s ease;
+}
+
+.action-bar.hidden {
+    transform: translateY(100%);
+    opacity: 0;
 }
 
 .action-title {

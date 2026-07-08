@@ -4,20 +4,20 @@ export const modelDatabase = {
         name: 'Proyek Pembelajaran Undip',
         badge: 'UNDIP',
         parts: {
-            'ban-depan': {
+            'ban': {
                 title: 'Ban & Suspensi',
                 function: 'Peredam kejut dan pergerakan',
                 desc: 'Komponen ban khusus off-road yang dirancang untuk meredam guncangan ekstrem. Dilengkapi dengan suspensi independen.'
             },
-            'mesin-belakang': {
+            'mesin': {
                 title: 'Blok Mesin',
                 function: 'Penghasil tenaga gerak utama',
                 desc: 'Mesin pembakaran internal atau motor listrik yang memberikan tenaga dorong ke gardan belakang mobil Buggy.'
             },
-            'rangka-utama': {
-                title: 'Rangka Pelindung (Roll Cage)',
-                function: 'Melindungi pengemudi',
-                desc: 'Struktur tubular baja yang sangat kuat, dirancang untuk melindungi pengemudi jika mobil terbalik (rollover).'
+            'casis': {
+                title: 'Casis & Rangka',
+                function: 'Struktur Pelindung',
+                desc: 'Struktur tubular baja (roll cage) yang sangat kuat, dirancang untuk melindungi pengemudi dan menopang seluruh komponen.'
             }
         }
     },

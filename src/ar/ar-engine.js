@@ -40,17 +40,17 @@ export class AREngine {
                         <!-- HOTSPOTS (Petunjuk Visual - Non Clickable now since we use UI) -->
                         <a-entity id="hotspots" position="0 0 0">
                             <!-- Hotspot Ban -->
-                            <a-sphere id="ban-depan" color="#00A2E9" radius="4" position="15 5 15" opacity="0.6"
+                            <a-sphere id="ban" color="#00A2E9" radius="4" position="15 5 15" opacity="0.6"
                                 animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
                             </a-sphere>
                             
                             <!-- Hotspot Mesin Belakang -->
-                            <a-sphere id="mesin-belakang" color="#FFC000" radius="4" position="0 10 -15" opacity="0.6"
+                            <a-sphere id="mesin" color="#FFC000" radius="4" position="0 10 -15" opacity="0.6"
                                 animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
                             </a-sphere>
 
                             <!-- Hotspot Rangka -->
-                            <a-sphere id="rangka-utama" color="#ff3b30" radius="4" position="0 25 0" opacity="0.6"
+                            <a-sphere id="casis" color="#ff3b30" radius="4" position="0 25 0" opacity="0.6"
                                 animation="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 800">
                             </a-sphere>
                         </a-entity>

@@ -66,6 +66,21 @@ export class UIController {
         const db = modelDatabase[targetId];
         if(!db) return;
 
+        // Tambahkan tombol Keseluruhan (Reset) di awal
+        const btnAll = document.createElement('button');
+        btnAll.className = 'btn-part active';
+        btnAll.textContent = 'Semua (Keseluruhan)';
+        btnAll.addEventListener('click', () => {
+            window.dispatchEvent(new Event('resetModelIsolation'));
+            this.hideInfoPanel();
+            
+            // Highlight button ini
+            const buttons = this.buttonsContainer.querySelectorAll('.btn-part');
+            buttons.forEach(b => b.classList.remove('active'));
+            btnAll.classList.add('active');
+        });
+        this.buttonsContainer.appendChild(btnAll);
+
         Object.keys(db.parts).forEach(partKey => {
             const btn = document.createElement('button');
             btn.className = 'btn-part';
@@ -73,6 +88,11 @@ export class UIController {
             btn.addEventListener('click', () => {
                 this.showInfoPanel(targetId, partKey);
                 window.dispatchEvent(new CustomEvent('isolatePart', { detail: partKey }));
+                
+                // Highlight active button (Reset All disilang)
+                const buttons = this.buttonsContainer.querySelectorAll('.btn-part');
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
             });
             this.buttonsContainer.appendChild(btn);
         });
