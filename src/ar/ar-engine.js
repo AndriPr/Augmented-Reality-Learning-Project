@@ -144,18 +144,35 @@ export class AREngine {
                 const animateEl = (elId, prop, to, duration = 800) => {
                     const el = document.getElementById(elId);
                     if (!el) return;
-                    const currentVals = el.getAttribute(prop) || {x:0, y:0, z:0};
-                    const animObj = { x: currentVals.x, y: currentVals.y, z: currentVals.z };
+                    
+                    let currentVals = el.getAttribute(prop);
+                    let parsedVals = {x: 0, y: 0, z: 0};
+                    
+                    if (typeof currentVals === 'string') {
+                        const parts = currentVals.trim().split(/\s+/);
+                        parsedVals = {
+                            x: parseFloat(parts[0]) || 0,
+                            y: parseFloat(parts[1]) || 0,
+                            z: parseFloat(parts[2]) || 0
+                        };
+                    } else if (currentVals && typeof currentVals === 'object') {
+                        parsedVals = {
+                            x: currentVals.x || 0,
+                            y: currentVals.y || 0,
+                            z: currentVals.z || 0
+                        };
+                    }
                     
                     anime({
-                        targets: animObj,
-                        x: to.x !== undefined ? to.x : currentVals.x,
-                        y: to.y !== undefined ? to.y : currentVals.y,
-                        z: to.z !== undefined ? to.z : currentVals.z,
+                        targets: parsedVals,
+                        x: to.x !== undefined ? to.x : parsedVals.x,
+                        y: to.y !== undefined ? to.y : parsedVals.y,
+                        z: to.z !== undefined ? to.z : parsedVals.z,
                         duration: duration,
                         easing: 'easeOutExpo',
                         update: function() {
-                            el.setAttribute(prop, animObj);
+                            // Convert back to string format to be absolutely safe for A-Frame
+                            el.setAttribute(prop, `${parsedVals.x} ${parsedVals.y} ${parsedVals.z}`);
                         }
                     });
                 };
