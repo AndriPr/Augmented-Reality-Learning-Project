@@ -11,20 +11,24 @@ export const modelDatabase = {
             },
             'maintenance': {
                 title: 'Maintenance Mesin',
-                function: 'Tutorial Inspeksi Mesin',
-                desc: 'Ikuti panduan mekanik langkah demi langkah di bawah ini untuk menginspeksi ruang mesin belakang mobil.',
+                function: 'Ganti Oli & Filter',
+                desc: 'Ikuti panduan mekanik langkah demi langkah di bawah ini untuk mempelajari prosedur penggantian pelumas mesin Buggy.',
                 steps: [
                     {
                         title: 'Langkah 1: Buka Akses Mesin',
-                        instruction: 'Posisikan dongkrak hidrolik. Kendurkan baut rangka pelindung belakang dan lepaskan suspensi ban belakang agar blok mesin terekspos.'
+                        instruction: 'Posisikan dongkrak hidrolik. Rangka baja dan suspensi belakang akan dibuka menjauh agar blok mesin mudah dijangkau.'
                     },
                     {
-                        title: 'Langkah 2: Inspeksi Visual',
-                        instruction: 'Periksa keausan pada blok mesin dan periksa kebocoran oli. Mesin akan disorot untuk memusatkan area inspeksi.'
+                        title: 'Langkah 2: Buka Katup Oli',
+                        instruction: 'Gunakan Kunci Pas (Wrench) ukuran 14mm untuk memutar baut pembuangan oli dan filter lama yang berada di atas blok mesin. Putar berlawanan arah jarum jam.'
                     },
                     {
-                        title: 'Langkah 3: Perakitan Kembali',
-                        instruction: 'Setelah inspeksi selesai, rangka tubular pelindung belakang dan suspensi dirakit kembali ke posisi semula. Kunci semua baut dengan kuat.'
+                        title: 'Langkah 3: Tuang Oli Baru',
+                        instruction: 'Setelah sisa oli lama terkuras, pasang kembali baut bawah. Lalu tuangkan pelumas (oli) sintetis baru perlahan-lahan ke dalam corong atas mesin.'
+                    },
+                    {
+                        title: 'Langkah 4: Perakitan Selesai',
+                        instruction: 'Pastikan seluruh baut tertutup rapat. Rangka tubular pelindung belakang dan suspensi dirakit kembali ke posisi semula secara otomatis.'
                     }
                 ]
             },

@@ -45,6 +45,27 @@ export class AREngine {
                             class="clickable" clickable-model>
                         </a-entity>
                         
+                        <!-- Hologram Tools (Hidden initially) -->
+                        <a-entity id="hologram-tools" position="0 0 0" visible="false">
+                            <!-- Kunci Pas -->
+                            <a-entity id="kunci-pas" position="0 25 -12" scale="5 5 5" visible="false">
+                                <!-- Gagang -->
+                                <a-box position="0 1 0" scale="0.2 2 0.1" color="#ff3333" material="opacity:0.8; transparent:true"></a-box>
+                                <!-- Kepala -->
+                                <a-cylinder position="0 2 0" rotation="90 0 0" radius="0.4" height="0.15" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <a-box position="0 2.2 0" scale="0.4 0.4 0.2" color="#000000" material="opacity:0"></a-box> <!-- Cutout fake -->
+                            </a-entity>
+                            
+                            <!-- Tabung Oli -->
+                            <a-entity id="tabung-oli" position="0 30 -12" scale="6 6 6" visible="false">
+                                <a-cylinder position="0 0 0" radius="0.5" height="1.5" color="#0055ff" material="opacity:0.85; transparent:true"></a-cylinder>
+                                <a-cone position="0 0.9 0" radius-bottom="0.5" radius-top="0.1" height="0.4" color="#0055ff" material="opacity:0.85; transparent:true"></a-cone>
+                                <a-cylinder position="0 1.2 0" radius="0.1" height="0.2" color="#ffffff"></a-cylinder>
+                                <!-- Tetesan Oli (Animasi turun) -->
+                                <a-sphere id="tetesan-oli" position="0 -1 0" radius="0.1" color="#FACC15" visible="false" material="opacity:0.8; transparent:true"></a-sphere>
+                            </a-entity>
+                        </a-entity>
+                        
                         <!-- Drop Shadow Fake untuk 2D Showcase -->
                         <a-circle id="drop-shadow" rotation="-90 0 0" position="0 -3 0" radius="18" color="#000000" opacity="0" material="shader: flat; transparent: true;"></a-circle>
                     </a-entity>
@@ -203,6 +224,13 @@ export class AREngine {
                     const parentMesh = this.el.getObject3D('mesh');
                     if (!parentMesh) return;
                     
+                    const toolsContainer = document.getElementById('hologram-tools');
+                    const kunciPas = document.getElementById('kunci-pas');
+                    const tabungOli = document.getElementById('tabung-oli');
+                    const tetesanOli = document.getElementById('tetesan-oli');
+                    
+                    if(toolsContainer) toolsContainer.setAttribute('visible', 'true');
+                    
                     parentMesh.traverse((node) => {
                         if (node.isMesh) {
                             if (!node.userData.originalMaterial) {
@@ -218,11 +246,13 @@ export class AREngine {
                             box.getCenter(worldCenter);
                             const localCenter = parentMesh.worldToLocal(worldCenter.clone());
                             
-                            const isCasisOrBan = (localCenter.y < 12 && Math.abs(localCenter.x) > 8) || (localCenter.z > -8);
                             const isMesin = localCenter.z < -8 && localCenter.y < 20;
                             
                             if (step === 0) {
                                 // Langkah 1: Buka Akses Mesin (Casis luar meledak/menjauh)
+                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                                
                                 node.material.transparent = false;
                                 node.material.opacity = 1;
                                 node.material.emissive = new THREE.Color(0x333333);
@@ -259,21 +289,62 @@ export class AREngine {
                                 }
                             } 
                             else if (step === 1) {
-                                // Langkah 2: Inspeksi Visual (Highlight mesin)
-                                if (!isMesin) {
-                                    // Casis tetap menjauh dan transparan
-                                    node.material.transparent = true;
-                                    node.material.opacity = 0.1;
-                                } else {
-                                    // Mesin menyala kuning
-                                    node.material.transparent = false;
-                                    node.material.opacity = 1;
-                                    node.material.emissive = new THREE.Color(0xaaaa00);
-                                    node.material.needsUpdate = true;
+                                // Langkah 2: Kunci Pas Buka Baut
+                                if (kunciPas) {
+                                    kunciPas.setAttribute('visible', 'true');
+                                    kunciPas.setAttribute('position', '0 25 -12'); // Posisi awal melayang atas
+                                    kunciPas.setAttribute('rotation', '0 0 0');
+                                    
+                                    // Animasi Turun lalu Muter
+                                    animateEl('kunci-pas', 'position', {x: 0, y: 15, z: -12}, 800);
+                                    setTimeout(() => {
+                                        // Putar 3x (360 * 3)
+                                        animateEl('kunci-pas', 'rotation', {x: 0, y: 1080, z: 0}, 1500);
+                                        // Highlight mesin kuning saat diputar
+                                        if (isMesin) {
+                                            node.material.emissive = new THREE.Color(0xaaaa00);
+                                            node.material.needsUpdate = true;
+                                        }
+                                    }, 800);
                                 }
+                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
                             }
                             else if (step === 2) {
-                                // Langkah 3: Perakitan Kembali
+                                // Langkah 3: Tuang Oli Baru
+                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                                if (tabungOli) {
+                                    tabungOli.setAttribute('visible', 'true');
+                                    tabungOli.setAttribute('position', '0 30 -12');
+                                    tabungOli.setAttribute('rotation', '0 0 0');
+                                    
+                                    // Animasi Turun -> Miring -> Netes
+                                    animateEl('tabung-oli', 'position', {x: 0, y: 20, z: -12}, 800);
+                                    setTimeout(() => {
+                                        animateEl('tabung-oli', 'rotation', {x: 0, y: 0, z: -45}, 500);
+                                        
+                                        // Tetesan oli turun
+                                        setTimeout(() => {
+                                            if (tetesanOli) {
+                                                tetesanOli.setAttribute('visible', 'true');
+                                                tetesanOli.setAttribute('position', '0 -1 0');
+                                                animateEl('tetesan-oli', 'position', {x: 0, y: -10, z: 0}, 1000);
+                                            }
+                                            // Highlight mesin jadi hijau (berhasil isi)
+                                            if (isMesin) {
+                                                node.material.emissive = new THREE.Color(0x00aa00);
+                                                node.material.needsUpdate = true;
+                                            }
+                                        }, 600);
+                                        
+                                    }, 800);
+                                }
+                            }
+                            else if (step === 3) {
+                                // Langkah 4: Perakitan Kembali
+                                if (kunciPas) kunciPas.setAttribute('visible', 'false');
+                                if (tabungOli) tabungOli.setAttribute('visible', 'false');
+                                if (tetesanOli) tetesanOli.setAttribute('visible', 'false');
+                                
                                 node.material.transparent = false;
                                 node.material.opacity = 1;
                                 node.material.emissive = new THREE.Color(0x333333);
