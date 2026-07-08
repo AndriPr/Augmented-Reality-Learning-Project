@@ -260,14 +260,20 @@ export class AREngine {
                     if (is2D) {
                         // Mode 2D Viewer
                         if (video) video.style.display = 'none';
-                        camera.appendChild(modelContainer); // Pindah ke layar
+                        
+                        // Gunakan object3D.add untuk mencegah reload DOM A-Frame dan menghindari efek hidden dari target
+                        camera.object3D.add(modelContainer.object3D); 
+                        modelContainer.object3D.visible = true;
+                        
                         modelContainer.setAttribute('position', '0 -0.5 -3');
                         modelContainer.setAttribute('scale', '0.05 0.05 0.05');
                         modelContainer.setAttribute('rotation', '0 0 0');
                     } else {
                         // Mode AR
                         if (video) video.style.display = 'block';
-                        target.appendChild(modelContainer); // Kembali menempel ke logo
+                        
+                        target.object3D.add(modelContainer.object3D);
+                        
                         modelContainer.setAttribute('position', '0 0 0');
                         modelContainer.setAttribute('scale', '0.05 0.05 0.05');
                         modelContainer.setAttribute('rotation', '0 0 0');
