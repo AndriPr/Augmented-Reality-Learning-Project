@@ -234,7 +234,7 @@ export class AREngine {
                         
                         // Isometric Showcase (Lego-style) dan jauhi kamera (Z=-15) agar tidak nembus tembok
                         modelContainer.setAttribute('position', '0 -2 -15');
-                        modelContainer.setAttribute('scale', '0.2 0.2 0.2');
+                        modelContainer.setAttribute('scale', '0.12 0.12 0.12'); // Diperkecil agar seluruhnya muat di layar
                         modelContainer.setAttribute('rotation', '25 -45 0');
                     } else {
                         // Mode AR
@@ -324,7 +324,7 @@ export class AREngine {
                 window.addEventListener('resetView', () => {
                     if (window.is2DModeLocal) {
                         this.el.setAttribute('position', '0 -2 -15');
-                        this.el.setAttribute('scale', '0.2 0.2 0.2');
+                        this.el.setAttribute('scale', '0.12 0.12 0.12');
                         this.el.setAttribute('rotation', '25 -45 0');
                     } else {
                         this.el.setAttribute('position', '0 0 0');
@@ -395,14 +395,14 @@ export class AREngine {
                         this.previousPan = { x: currentPanX, y: currentPanY };
                         
                     } else if (e.touches.length === 1 && this.previousTouch) {
-                        // Drag to Rotate X & Y (Di-invert agar mengikuti arah jari)
+                        // Drag to Rotate X & Y (Kembali ke arah putaran awal yang terasa lebih pas)
                         const deltaX = e.touches[0].pageX - this.previousTouch.x;
                         const deltaY = e.touches[0].pageY - this.previousTouch.y;
                         
                         const rotation = this.el.getAttribute('rotation');
                         this.el.setAttribute('rotation', {
-                            x: rotation.x - deltaY * 0.3, // invert (-)
-                            y: rotation.y - deltaX * 0.3, // invert (-)
+                            x: rotation.x + deltaY * 0.3, // revert to (+)
+                            y: rotation.y + deltaX * 0.3, // revert to (+)
                             z: rotation.z
                         });
                         
