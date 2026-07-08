@@ -215,9 +215,11 @@ export class AREngine {
                                     node.material.opacity = 0.2;
                                     node.material.emissive = new THREE.Color(0x000000); 
                                     
-                                    // Hitung arah ledakan menjauh dari pusat
-                                    const dir = new THREE.Vector3().copy(localCenter).normalize();
-                                    const explodeDist = 25; // Jarak bongkar
+                                    // Hitung arah ledakan menjauh dari origin parent
+                                    const dir = new THREE.Vector3().copy(node.userData.originalPosition).normalize();
+                                    if (dir.lengthSq() < 0.001) dir.set(0, 1, 0); // Cegah NaN jika di origin
+                                    
+                                    const explodeDist = 30; // Jarak bongkar
                                     const targetPos = node.userData.originalPosition.clone().add(dir.multiplyScalar(explodeDist));
                                     
                                     AFRAME.ANIME({

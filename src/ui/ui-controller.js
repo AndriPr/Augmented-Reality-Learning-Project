@@ -135,7 +135,6 @@ export class UIController {
 
     hideInfoPanel() {
         this.infoPanel.classList.remove('visible');
-        this.buttonsContainer.innerHTML = '';
         
         // Reset isolasi 3D model
         window.dispatchEvent(new Event('resetModelIsolation'));
