@@ -211,6 +211,7 @@ export class UIController {
             this.infoPanel.appendChild(resetBtn);
         }
 
+        this.infoPanel.classList.remove('hidden');
         this.infoPanel.classList.add('visible');
 
         // Highlight active button (if exists)
@@ -225,6 +226,11 @@ export class UIController {
 
     hideInfoPanel() {
         this.infoPanel.classList.remove('visible');
+        setTimeout(() => {
+            if (!this.infoPanel.classList.contains('visible')) {
+                this.infoPanel.classList.add('hidden');
+            }
+        }, 400); // match CSS transition duration
         
         // Reset isolasi 3D model
         window.dispatchEvent(new Event('resetModelIsolation'));
