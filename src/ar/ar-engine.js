@@ -200,7 +200,71 @@ export class AREngine {
                     const mode = e.detail;
                     window.dispatchEvent(new Event('resetModelIsolation'));
                     
-                    if(mode === 'health') {
+                    if (mode === 'spesifikasi') {
+                        const parentMesh = this.el.getObject3D('mesh');
+                        if (parentMesh) {
+                            parentMesh.traverse((node) => {
+                                if (node.isMesh) {
+                                    if (!node.userData.originalMaterial) {
+                                        node.userData.originalMaterial = node.material;
+                                        node.material = node.material.clone();
+                                    }
+                                    if (!node.userData.originalPosition) {
+                                        node.userData.originalPosition = node.position.clone();
+                                    }
+                                    
+                                    const isMotherboard = node.name === 'Bagian Mesin Laptop';
+                                    const isRAM = node.name === 'Cube';
+                                    
+                                    if (node.name === 'Tutup Mesin Laptop') {
+                                        const targetPos = node.userData.originalPosition.clone();
+                                        targetPos.y += 12; // Melayang perlahan ke atas
+                                        targetPos.z -= 5;
+                                        
+                                        // Buat transparan dan glow PLN Blue
+                                        node.material.transparent = true;
+                                        node.material.opacity = 0.4;
+                                        node.material.emissive = new THREE.Color(0x0055aa); 
+                                        node.material.needsUpdate = true;
+                                        
+                                        anime({
+                                            targets: node.position,
+                                            x: targetPos.x,
+                                            y: targetPos.y,
+                                            z: targetPos.z,
+                                            duration: 1500,
+                                            easing: 'easeOutQuint' // Smooth, cinematic ease out
+                                        });
+                                    } else if (node.name === 'Bagian Monitor Laptop') {
+                                        const targetPos = node.userData.originalPosition.clone();
+                                        targetPos.z -= 10; // Layar mundur sedikit
+                                        
+                                        anime({
+                                            targets: node.position,
+                                            x: targetPos.x,
+                                            y: targetPos.y,
+                                            z: targetPos.z,
+                                            duration: 1200,
+                                            easing: 'easeOutCubic'
+                                        });
+                                    } else if (isMotherboard || isRAM) {
+                                        // Pamerkan jeroan laptop dengan glow futuristik
+                                        setTimeout(() => {
+                                            anime({
+                                                targets: node.material.emissive,
+                                                r: 0.0,
+                                                g: 0.8,
+                                                b: 1.0, // Cyan/Blue glow
+                                                duration: 1000,
+                                                easing: 'easeInOutQuad'
+                                            });
+                                            node.material.needsUpdate = true;
+                                        }, 800);
+                                    }
+                                }
+                            });
+                        }
+                    } else if(mode === 'health') {
                         // Simulasi thermal (warna merah di sekitar mesin)
                         const parentMesh = this.el.getObject3D('mesh');
                         if (parentMesh) {
