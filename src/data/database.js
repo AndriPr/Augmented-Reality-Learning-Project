@@ -1,46 +1,46 @@
 // Centralized Data Store for AR Models
 export const modelDatabase = {
     'target0': {
-        name: 'Modul Pelatihan Mekanik: Mobil Buggy',
-        badge: 'UNDIP EDU',
+        name: 'Modul Edukasi PLN: Laptop Lapangan',
+        badge: 'PLN EDU',
         modes: {
             'spesifikasi': {
-                title: 'Spesifikasi Detail',
-                function: 'Overview Rangka & Mesin',
-                desc: 'Mobil Buggy ini dilengkapi dengan rangka tubular baja murni untuk proteksi maksimal, suspensi independen, dan mesin bertenaga tinggi untuk medan off-road ekstrem.'
+                title: 'Spesifikasi Inti',
+                function: 'Laptop Standar Lapangan',
+                desc: 'Laptop tangguh untuk petugas PLN, dilengkapi baterai tahan lama dan RAM modular untuk mendukung sistem pemetaan jaringan kelistrikan secara realtime.'
             },
             'maintenance': {
-                title: 'Maintenance Mesin',
-                function: 'Ganti Oli & Filter',
-                desc: 'Ikuti panduan mekanik langkah demi langkah di bawah ini untuk mempelajari prosedur penggantian pelumas mesin Buggy.',
+                title: 'Maintenance',
+                function: 'Penggantian Modul (RAM/Baterai)',
+                desc: 'Ikuti panduan perbaikan berikut untuk melepas dan mengganti modul internal secara aman.',
                 steps: [
                     {
-                        title: 'Langkah 1: Buka Akses Mesin',
-                        instruction: 'Posisikan dongkrak hidrolik. Rangka baja dan suspensi belakang akan dibuka menjauh agar blok mesin mudah dijangkau.'
+                        title: 'Langkah 1: Persiapan & Inspeksi',
+                        instruction: 'Pastikan laptop dalam keadaan mati. Mesin akan dipindai, dan Casing bawah siap untuk dibuka menjauh dari bodi utama.'
                     },
                     {
-                        title: 'Langkah 2: Buka Katup Oli',
-                        instruction: 'Gunakan Kunci Pas (Wrench) ukuran 14mm untuk memutar baut pembuangan oli dan filter lama yang berada di atas blok mesin. Putar berlawanan arah jarum jam.'
+                        title: 'Langkah 2: Membuka Casing Utama',
+                        instruction: 'Gunakan Kunci Obeng (hologram) untuk membuka sekrup. Bagian Casing dan Layar akan diisolasi agar modul mesin utama terlihat jelas.'
                     },
                     {
-                        title: 'Langkah 3: Tuang Oli Baru',
-                        instruction: 'Setelah sisa oli lama terkuras, pasang kembali baut bawah. Lalu tuangkan pelumas (oli) sintetis baru perlahan-lahan ke dalam corong atas mesin.'
+                        title: 'Langkah 3: Mengganti Modul',
+                        instruction: 'Cabut modul lama (RAM/Baterai) berbentuk kotak dari soketnya. Pasang modul yang baru hingga lampu indikator mesin berwarna hijau (sukses).'
                     },
                     {
-                        title: 'Langkah 4: Perakitan Selesai',
-                        instruction: 'Pastikan seluruh baut tertutup rapat. Rangka tubular pelindung belakang dan suspensi dirakit kembali ke posisi semula secara otomatis.'
+                        title: 'Langkah 4: Tutup Kembali',
+                        instruction: 'Kembalikan Casing bawah ke posisi semula, kencangkan baut untuk memastikan laptop aman dari debu lapangan.'
                     }
                 ]
             },
             'health': {
-                title: 'Health Status',
-                function: 'Telemetri Kendaraan',
-                desc: 'Tekanan ban berada di angka 18 PSI (Optimal untuk Off-road). Suhu mesin saat ini 85°C (Normal). Kondisi oli pada 80% (Baik).'
+                title: 'Status Perangkat',
+                function: 'Monitoring Suhu & Baterai',
+                desc: 'Kondisi Baterai: 85% (Normal). Suhu Motherboard: 45°C. Semua komponen beroperasi dalam batas aman.'
             },
             'ux': {
                 title: 'User Experience',
-                function: 'Performa Off-Road',
-                desc: 'Bantingan suspensi sangat mulus saat melewati jalan berbatu. Kokpit pengemudi dioptimalkan dengan sudut pandang yang luas tanpa blind-spot besar.'
+                function: 'Aksesibilitas Lapangan',
+                desc: 'Desain kokoh, layar anti-silau (anti-glare) untuk di bawah sinar matahari, dan sasis yang mudah dibuka untuk penggantian komponen cepat.'
             }
         }
     }

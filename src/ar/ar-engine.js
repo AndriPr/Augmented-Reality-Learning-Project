@@ -47,26 +47,15 @@ export class AREngine {
                         
                         <!-- Hologram Tools (Hidden initially) -->
                         <a-entity id="hologram-tools" position="0 0 0" visible="false">
-                            <!-- Kunci Pas -->
+                            <!-- Obeng (Screwdriver) -->
                             <a-entity id="kunci-pas" position="0 18 -9" scale="2 2 2" visible="false">
-                                <!-- Gagang -->
-                                <a-box position="0 0 0" scale="0.3 3 0.2" color="#ff3333" material="opacity:0.9; transparent:true"></a-box>
-                                <!-- Kepala Bawah -->
-                                <a-cylinder position="0 -1.5 0" rotation="90 0 0" radius="0.5" height="0.25" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
-                                <!-- Kepala Atas (Capit) -->
-                                <a-cylinder position="0 1.5 0" rotation="90 0 0" radius="0.6" height="0.25" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
-                                <a-box position="0 1.8 0" scale="0.6 0.6 0.3" color="#000000" material="opacity:0"></a-box> 
+                                <!-- Gagang Obeng -->
+                                <a-cylinder position="0 2 0" radius="0.3" height="2" color="#00A2E9" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <!-- Batang Besi Obeng -->
+                                <a-cylinder position="0 0 0" radius="0.08" height="3" color="#dddddd" material="opacity:0.9; transparent:true"></a-cylinder>
+                                <!-- Ujung Mata Obeng -->
+                                <a-cone position="0 -1.6 0" radius-bottom="0.08" radius-top="0.02" height="0.4" color="#aaaaaa"></a-cone>
                             </a-entity>
-                            
-                            <!-- Tabung Oli -->
-                            <a-entity id="tabung-oli" position="0 22 -9" scale="2.5 2.5 2.5" visible="false">
-                                <a-cylinder position="0 0 0" radius="1" height="3" color="#0055ff" material="opacity:0.9; transparent:true"></a-cylinder>
-                                <a-cone position="0 1.8 0" radius-bottom="1" radius-top="0.2" height="0.8" color="#0055ff" material="opacity:0.9; transparent:true"></a-cone>
-                                <a-cylinder position="0 2.3 0" radius="0.2" height="0.4" color="#ffffff"></a-cylinder>
-                            </a-entity>
-                            
-                            <!-- Tetesan Oli (Terpisah agar jatuh lurus ke bawah, tidak miring) -->
-                            <a-sphere id="tetesan-oli" position="-2 15 -9" scale="1.5 1.5 1.5" radius="0.3" color="#FACC15" visible="false" material="opacity:0.9; transparent:true"></a-sphere>
                         </a-entity>
                         
                         <!-- Drop Shadow Fake untuk 2D Showcase -->
@@ -319,12 +308,9 @@ export class AREngine {
                                 node.userData.originalPosition = node.position.clone();
                             }
                             
-                            const box = new THREE.Box3().setFromObject(node);
-                            const worldCenter = new THREE.Vector3();
-                            box.getCenter(worldCenter);
-                            const localCenter = parentMesh.worldToLocal(worldCenter.clone());
-                            
-                            const isMesin = localCenter.z < -8 && localCenter.y < 20;
+                            const isCasing = node.name === 'Tutup Mesin Laptop' || node.name === 'Bagian Monitor Laptop';
+                            const isMotherboard = node.name === 'Bagian Mesin Laptop';
+                            const isRAM = node.name === 'Cube';
                             
                             if (step === 0) {
                                 node.material.transparent = false;
@@ -332,14 +318,13 @@ export class AREngine {
                                 node.material.emissive = new THREE.Color(0x333333);
                                 node.material.needsUpdate = true;
                                 
-                                if (!isMesin) {
-                                    const dir = new THREE.Vector3().copy(localCenter).normalize();
-                                    if (dir.lengthSq() < 0.001) dir.set(0, 1, 0);
-                                    const explodeDist = 50; 
-                                    const targetPos = node.userData.originalPosition.clone().add(dir.multiplyScalar(explodeDist));
+                                if (node.name === 'Tutup Mesin Laptop') {
+                                    const targetPos = node.userData.originalPosition.clone();
+                                    targetPos.y += 10; // Angkat tutup casing ke atas
+                                    targetPos.z -= 10; // Geser sedikit ke belakang
                                     
                                     node.material.transparent = true;
-                                    node.material.opacity = 0.2;
+                                    node.material.opacity = 0.5; // Agak transparan agar dalam terlihat
                                     
                                     anime({
                                         targets: node.position,
@@ -348,6 +333,17 @@ export class AREngine {
                                         z: targetPos.z,
                                         duration: 800,
                                         easing: 'easeOutExpo'
+                                    });
+                                } else if (isRAM) {
+                                    node.material.emissive = new THREE.Color(0x555555);
+                                    node.material.needsUpdate = true;
+                                    anime({
+                                        targets: node.position,
+                                        x: node.userData.originalPosition.x,
+                                        y: node.userData.originalPosition.y,
+                                        z: node.userData.originalPosition.z,
+                                        duration: 800,
+                                        easing: 'easeOutElastic(1, .8)'
                                     });
                                 } else {
                                     anime({
@@ -361,24 +357,39 @@ export class AREngine {
                                 }
                             } 
                             else if (step === 1) {
-                                if (!isMesin) {
-                                    node.material.transparent = true;
-                                    node.material.opacity = 0.1;
-                                } else {
-                                    // Beri jeda agar menyala ketika kunci pas mulai memutar (1 detik kemudian)
+                                if (isMotherboard) {
+                                    // Motherboard di-highlight setelah obeng muter
                                     setTimeout(() => {
-                                        node.material.transparent = false;
-                                        node.material.opacity = 1;
                                         node.material.emissive = new THREE.Color(0xaaaa00);
+                                        node.material.needsUpdate = true;
+                                    }, 1000);
+                                }
+                                if (isRAM) {
+                                    // Highlight RAM
+                                    setTimeout(() => {
+                                        node.material.emissive = new THREE.Color(0x0088ff);
                                         node.material.needsUpdate = true;
                                     }, 1000);
                                 }
                             }
                             else if (step === 2) {
-                                if (isMesin) {
-                                    // Beri jeda menyala hijau ketika oli menetes
+                                if (isRAM) {
+                                    // Animasi modul RAM dicabut
+                                    const targetPos = node.userData.originalPosition.clone();
+                                    targetPos.y += 5; // Terangkat dari slotnya
+                                    
+                                    anime({
+                                        targets: node.position,
+                                        x: targetPos.x,
+                                        y: targetPos.y,
+                                        z: targetPos.z,
+                                        duration: 800,
+                                        easing: 'easeOutExpo'
+                                    });
+                                    
+                                    // Indikator hijau sukses
                                     setTimeout(() => {
-                                        node.material.emissive = new THREE.Color(0x00aa00);
+                                        node.material.emissive = new THREE.Color(0x00ff00);
                                         node.material.needsUpdate = true;
                                     }, 1400);
                                 }
