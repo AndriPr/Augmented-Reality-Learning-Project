@@ -96,7 +96,7 @@
 }
 #info-panel {
     position: fixed;
-    bottom: 85px;
+    bottom: 20px;
     left: 10px;
     right: 10px;
     transform: translateY(150%);

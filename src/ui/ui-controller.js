@@ -107,9 +107,6 @@ export class UIController {
     toggleARMode(is2D) {
         this.is2DMode = is2D;
         
-        // Update Button UI
-        this.btnToggleMode.textContent = this.is2DMode ? 'Beralih ke AR' : 'Beralih ke 2D';
-        
         // Update Virtual BG
         if (this.is2DMode) {
             this.virtualBg.classList.remove('hidden');
