@@ -1,42 +1,42 @@
 // Centralized Data Store for AR Models
 export const modelDatabase = {
     'target0': {
-        name: 'Modul Pembelajaran IT: Laptop',
+        name: 'Modul Pelatihan Mekanik: Mobil Buggy',
         badge: 'UNDIP EDU',
         modes: {
             'spesifikasi': {
                 title: 'Spesifikasi Detail',
-                function: 'Overview Komponen Internal',
-                desc: 'Laptop ini dilengkapi dengan prosesor Intel Core i7 Gen 12, RAM DDR4 16GB yang dapat di-upgrade, dan penyimpanan SSD NVMe 512GB untuk performa maksimal.'
+                function: 'Overview Rangka & Mesin',
+                desc: 'Mobil Buggy ini dilengkapi dengan rangka tubular baja murni untuk proteksi maksimal, suspensi independen, dan mesin bertenaga tinggi untuk medan off-road ekstrem.'
             },
             'maintenance': {
-                title: 'Maintenance (RAM)',
-                function: 'Tutorial Upgrade RAM',
-                desc: 'Ikuti panduan langkah demi langkah di bawah ini untuk mempelajari cara mengganti keping RAM dengan aman.',
+                title: 'Maintenance Mesin',
+                function: 'Tutorial Inspeksi Mesin',
+                desc: 'Ikuti panduan mekanik langkah demi langkah di bawah ini untuk menginspeksi ruang mesin belakang mobil.',
                 steps: [
                     {
-                        title: 'Langkah 1: Buka Casing Bawah',
-                        instruction: 'Pastikan laptop dalam keadaan mati. Lepaskan baut di bagian bawah, lalu angkat penutup bawah secara perlahan dari sudutnya.'
+                        title: 'Langkah 1: Buka Akses Mesin',
+                        instruction: 'Posisikan dongkrak hidrolik. Kendurkan baut rangka pelindung belakang dan lepaskan suspensi ban belakang agar blok mesin terekspos.'
                     },
                     {
-                        title: 'Langkah 2: Lepas RAM Lama',
-                        instruction: 'Tarik perlahan dua tuas logam di sisi kiri dan kanan slot RAM ke arah luar hingga keping RAM terangkat 30 derajat, lalu cabut RAM lama.'
+                        title: 'Langkah 2: Inspeksi Visual',
+                        instruction: 'Periksa keausan pada blok mesin dan periksa kebocoran oli. Mesin akan disorot untuk memusatkan area inspeksi.'
                     },
                     {
-                        title: 'Langkah 3: Pasang RAM Baru',
-                        instruction: 'Masukkan keping RAM baru dengan kemiringan 30 derajat ke dalam slot, lalu tekan perlahan ke bawah hingga kedua tuas logam berbunyi klik dan mengunci.'
+                        title: 'Langkah 3: Perakitan Kembali',
+                        instruction: 'Setelah inspeksi selesai, rangka tubular pelindung belakang dan suspensi dirakit kembali ke posisi semula. Kunci semua baut dengan kuat.'
                     }
                 ]
             },
             'health': {
                 title: 'Health Status',
-                function: 'Analisis Kondisi Hardware',
-                desc: 'Kesehatan baterai berada di angka 89% (Good). Temperatur rata-rata prosesor 45°C (Idle) dan 75°C (Load). Kipas pendingin berfungsi normal.'
+                function: 'Telemetri Kendaraan',
+                desc: 'Tekanan ban berada di angka 18 PSI (Optimal untuk Off-road). Suhu mesin saat ini 85°C (Normal). Kondisi oli pada 80% (Baik).'
             },
             'ux': {
                 title: 'User Experience',
-                function: 'Ergonomi & Penggunaan',
-                desc: 'Keyboard dilengkapi dengan fitur tactile-feedback yang nyaman untuk mengetik lama. Desain engsel 180 derajat memudahkan kolaborasi.'
+                function: 'Performa Off-Road',
+                desc: 'Bantingan suspensi sangat mulus saat melewati jalan berbatu. Kokpit pengemudi dioptimalkan dengan sudut pandang yang luas tanpa blind-spot besar.'
             }
         }
     }
