@@ -1,7 +1,7 @@
 // Centralized Data Store for AR Models
 export const modelDatabase = {
     'target0': {
-        name: 'Modul Edukasi PLN: Laptop Lapangan',
+        name: 'Laptop PLN',
         badge: 'PLN EDU',
         modes: {
             'spesifikasi': {

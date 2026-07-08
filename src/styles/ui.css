@@ -25,9 +25,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 16px;
-    padding: 12px 20px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
     pointer-events: auto; /* Allow clicking buttons */
 }
 
@@ -58,8 +58,9 @@
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.2);
     color: white;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: 8px;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -91,13 +92,13 @@
 
 /* Info Panel */
 .glass-panel {
-    padding: 20px;
+    padding: 12px 16px;
 }
 #info-panel {
     position: fixed;
-    bottom: 80px;
-    left: 20px;
-    right: 20px;
+    bottom: 85px;
+    left: 10px;
+    right: 10px;
     transform: translateY(150%);
     opacity: 0;
     z-index: 1000;
@@ -117,7 +118,7 @@
 
 .panel-header h3 {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -127,9 +128,9 @@
     background: rgba(0, 162, 233, 0.2);
     color: #00A2E9;
     border: 1px solid rgba(0, 162, 233, 0.5);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -144,7 +145,7 @@
 
 .function-text {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #FACC15; /* Golden yellow for function */
     letter-spacing: 0.3px;
@@ -152,9 +153,9 @@
 
 .desc-text {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     color: #e2e8f0;
-    line-height: 1.5;
+    line-height: 1.4;
     font-weight: 400;
 }
 
@@ -168,7 +169,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--glass-border);
-    padding: 15px 15px 25px 15px; /* Extra padding at bottom for phones */
+    padding: 10px 10px 15px 10px; /* Extra padding at bottom for phones */
     z-index: 200;
     pointer-events: auto;
     transition: transform 0.4s ease;
@@ -205,10 +206,10 @@
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     color: white;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     transition: all 0.2s;
     white-space: nowrap;
 }
