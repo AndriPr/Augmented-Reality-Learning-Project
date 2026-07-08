@@ -200,6 +200,9 @@ export class UIController {
             this.infoFunction.textContent = data.function;
             this.infoDesc.textContent = data.desc;
             
+            // Auto-hide action bar
+            this.actionBar.classList.add('hidden');
+            
             // Bersihkan step controller lama jika ada
             const oldStepCtrl = document.getElementById('step-controller');
             if(oldStepCtrl) oldStepCtrl.remove();
@@ -310,6 +313,10 @@ export class UIController {
 
     hideInfoPanel() {
         this.infoPanel.classList.remove('visible');
+        
+        // Kembalikan action bar
+        this.actionBar.classList.remove('hidden');
+        
         setTimeout(() => {
             if (!this.infoPanel.classList.contains('visible')) {
                 this.infoPanel.classList.add('hidden');
