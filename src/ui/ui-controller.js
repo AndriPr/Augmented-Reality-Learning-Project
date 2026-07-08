@@ -160,7 +160,12 @@ export class UIController {
         const btnAll = document.createElement('button');
         btnAll.className = 'btn-part active';
         btnAll.textContent = 'Semua (Keseluruhan)';
+        let resetIsAnimating = false;
         btnAll.addEventListener('click', () => {
+            if (resetIsAnimating) return;
+            resetIsAnimating = true;
+            setTimeout(() => { resetIsAnimating = false; }, 1000);
+
             window.dispatchEvent(new Event('resetModelIsolation'));
             this.hideInfoPanel();
             
@@ -175,7 +180,17 @@ export class UIController {
             const btn = document.createElement('button');
             btn.className = 'btn-part';
             btn.textContent = db.parts[partKey].title;
+            
+            // Spam-click protection (debounce)
+            let isAnimating = false;
+            
             btn.addEventListener('click', () => {
+                if (isAnimating) return;
+                
+                // Block clicks for 1 second (animation duration + buffer)
+                isAnimating = true;
+                setTimeout(() => { isAnimating = false; }, 1000);
+                
                 this.showInfoPanel(targetId, partKey);
                 window.dispatchEvent(new CustomEvent('isolatePart', { detail: partKey }));
                 
@@ -205,7 +220,13 @@ export class UIController {
             resetBtn.style.marginTop = '15px';
             resetBtn.style.width = '100%';
             resetBtn.textContent = 'Kembalikan Tampilan Penuh';
+            
+            let isResetAnimating = false;
             resetBtn.addEventListener('click', () => {
+                if (isResetAnimating) return;
+                isResetAnimating = true;
+                setTimeout(() => { isResetAnimating = false; }, 1000);
+                
                 this.hideInfoPanel();
             });
             this.infoPanel.appendChild(resetBtn);

@@ -116,29 +116,46 @@
 }
 
 .panel-header h3 {
-    color: var(--pln-blue);
-    font-size: 1.2rem;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .badge {
-    background: var(--pln-yellow);
-    color: black;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.7rem;
-    font-weight: 800;
+    background: rgba(0, 162, 233, 0.2);
+    color: #00A2E9;
+    border: 1px solid rgba(0, 162, 233, 0.5);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.panel-body {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .function-text {
+    margin: 0;
+    font-size: 1.05rem;
     font-weight: 600;
-    margin-bottom: 5px;
+    color: #FACC15; /* Golden yellow for function */
+    letter-spacing: 0.3px;
 }
 
 .desc-text {
-    font-size: 0.9rem;
-    color: #cbd5e1;
-    margin-bottom: 15px;
-    line-height: 1.4;
+    margin: 0;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    line-height: 1.5;
+    font-weight: 400;
 }
 
 /* Fixed Footer Action Bar */
